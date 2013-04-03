@@ -21,13 +21,15 @@ void* substract(LinkedList l) {
 
 void* print(LinkedList l) {
 	char* res = VLH_getString(l);
-	return res;
+	printf("%s\n", res);
+	return NULL;
 }
 
 Identifier I_find(const char* name, Identifiers I) {
 	int i;
 	Identifier Id;
-	for(i=0;i<10;i++) {
+    Id.id = "NotFound";
+	for(i=0;i<3;i++) {
 		if(strcmp(I[i].id,name) == 0) {
 			return I[i];
 		}

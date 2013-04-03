@@ -2,32 +2,35 @@
 #include "Parse.h"
 #include <string.h>
 
-void E_checkAndEval(const char* args, LinkedList l, Identifiers I) {
+void E_checkAndEval(const char* args, LinkedList l, Identifiers I, bool* valid) {
 	static int calls = 0;
 	calls++;
 	/*printf("%d\n", calls);*/
 	/*printf("%s\n", args);*/
+	*valid = true;
 	LinkedList sign = P_parse(args);
 	char* signType;
 	char* paramType;
 	void* subRes;
 	char** returns = (char**)malloc(sizeof(char**));
-	while(!LL_isEmpty(sign) && !LL_isEmpty(l)) {
+	while(!LL_isEmpty(sign) && !LL_isEmpty(l) && *valid) {
 		signType = (char*)(((Var*)sign->value)->name);
 		paramType = (char*)(((Var*)l->value)->type);
 		if(!(strcmp(signType,paramType) == 0)) {
 			if((strcmp(paramType,"sub")==0)) {
 				subRes = E_eval(P_parse(VLH_getString(l)), I, returns);
-				if(!strcmp(signType,(const char*) *returns)==0) {
-					printf("Wrong type in subexpression returns !\n");
-					exit(1);
+				if(subRes!=NULL) {
+					if(!strcmp(signType,(const char*) *returns)==0) {
+						printf("Wrong type in subexpression returns !\n");
+						*valid = false;
+					} else {
+						((Var*)(l->value))->type = (const char*) *returns;
+						((Var*)(l->value))->value = subRes;
+					}
 				}
-				((Var*)(l->value))->type = (const char*) *returns;
-				((Var*)(l->value))->value = subRes;
 			} else {
-				printf("Wrong types !\n");
-				printf("%s:%s\n", signType, paramType);
-				exit(1);
+				printf("Wrong types, expected : %s, got : %s \n", signType, paramType);
+				*valid = false;
 			}
 		}
 		l = LL_getNext(l);
@@ -36,7 +39,7 @@ void E_checkAndEval(const char* args, LinkedList l, Identifiers I) {
 	}
 	if((LL_isEmpty(sign) && !LL_isEmpty(l)) || (!LL_isEmpty(sign) && LL_isEmpty(l))) {
 		printf("Wrong number of arguments !\n");
-		exit(1);
+		*valid = false;
 	}	
 }
 
@@ -44,21 +47,39 @@ void* E_eval(LinkedList l, Identifiers I, char** returns) {
 	LinkedList lt = l;
 	void* res;
 	Identifier act = I_find(((Var*)LL_getValue(l))->name, I);
-	lt = LL_getNext(l);
-	E_checkAndEval(act.args, lt, I);
-	res = act.function(lt);
-	*returns = (char*)malloc((strlen(act.returns)+1) * sizeof(char));
-	strcpy(*returns, act.returns);
-	return res;
-	/*E_printResult(act.returns, res);*/
+	bool valid;
+	if(!(strcmp(act.id, "NotFound") == 0)) {
+		lt = LL_getNext(l);
+		E_checkAndEval(act.args, lt, I, &valid);
+		if(valid) {
+			res = act.function(lt);
+			*returns = (char*)malloc((strlen(act.returns)+1) * sizeof(char));
+			strcpy(*returns, act.returns);
+			return res;
+		} else {
+			return NULL;
+		}
+	} else {
+		printf("Unknown Identifier : %s\n", ((Var*)LL_getValue(l))->name);
+		return NULL;
+	}
 }
 
-void E_printResult(const char* returns, void* result) {
+void tryPrintInt(const char* returns, void* result) {
 	if(strcmp(returns,"int")==0) {
 		printf("%d\n", *((int*)result));
-	} else { 
+	}
+}
+
+void tryPrintString(const char* returns, void* result) {
 		if(strcmp(returns, "string")==0) {
 			printf("%s\n", (char*)result);
 		}
+}
+
+void E_printResult(const char* returns, void* result) {
+	if(result != NULL) {
+		tryPrintString(returns, result);
+		tryPrintInt(returns, result);
 	}
 }

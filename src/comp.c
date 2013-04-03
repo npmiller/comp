@@ -16,23 +16,25 @@
 	/*}*/
 /*}*/
 
-void process(char *a) {
+void process(char *a, Identifiers Is) {
 	LinkedList l;
 	char** returns = (char**)malloc(sizeof(char*));
 	void* res;
 	l = P_parse(a);
-	Identifiers Is;
-	Is = I_Identifiers();
 	res = E_eval(l, Is, returns);
-	E_printResult(*returns, res);
+	if(res != NULL) {
+		E_printResult(*returns, res);
+	}
 	/*printf("%d\n", *((int*)((Var*)(l->value))->value));*/
 }
 
 int main() {
 	char *a;	
+	Identifiers Is;
+	Is = I_Identifiers();
 	while(true) {
 		a = readline("> ");
-		process(a);
+		process(a, Is);
 	}
 	free(a);
 	return EXIT_SUCCESS;
