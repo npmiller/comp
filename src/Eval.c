@@ -60,7 +60,7 @@ void* E_eval(LinkedList l, Identifiers I, char** returns) {
 			return NULL;
 		}
 	} else {
-		printf("Unknown Identifier : %s\n", VLH_getName(l));
+		printf("Unknown Identifier : '%s'\n", VLH_getName(l));
 		return NULL;
 	}
 }

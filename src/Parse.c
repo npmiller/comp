@@ -4,61 +4,76 @@
 #include <ctype.h>
 #include <string.h>
 
+
 char* P_matchingBracket(const char* string, const char delimO, const char delimF, int* pos) {
 	char* buf = NULL;
-	int i = *pos;
 	int bracketCounter = 0;
 	int charNum = 1;
 	buf = (char*)realloc(buf, charNum*sizeof(char));
-	buf[charNum-1] = string[i];
-	i++;
-	while(!((string[i] == delimF) && (bracketCounter==0))) {
-		if(string[i] == delimO) {
+	buf[charNum-1] = string[*pos];
+	(*pos)++;
+	while(!((string[*pos] == delimF) && (bracketCounter==0))) {
+		if(string[*pos] == delimO) {
 			bracketCounter++;
 		}
-		if((string[i] == delimF) && (bracketCounter != 0)) {
+		if((string[*pos] == delimF) && (bracketCounter != 0)) {
 			bracketCounter--;
 		}		
 		charNum++;
 		buf = (char*)realloc(buf, charNum*sizeof(char));
-		buf[charNum-1] = string[i];
-		i++;
+		buf[charNum-1] = string[*pos];
+		(*pos)++;
 	}
-	*pos = i;
-	/*printf("P_matchingBracket : %s\n", buf);*/
+	(*pos)++; /* met la position au charactère suivant la parenthèse fermante */
 	return buf;
+}
+
+char * P_getInBetween(const char* string, char delim, int* pos) {
+	char* buf = NULL;
+	int charNum = 1;
+	do{
+		buf = (char*)realloc(buf, charNum*sizeof(char));
+		buf[charNum - 1] = string[*pos];
+		charNum++;
+		(*pos)++;
+	} while(string[*pos] != delim);
+	(*pos)++;
+	return buf;
+}
+
+void discardBlankChars(const char* string, int* pos) {
+	while(isblank(string[*pos])) {
+		(*pos)++;
+	}
 }
 
 char* P_getNextWord(const char* line, int pos, int *end) {
 	char *buf = NULL;
-	int i = pos;
 	int charNum = 1;
 	char delim = DELIM;
-	if(line[i] == END) { *end = -1;  return buf; }
-	if(line[i] == '(') {
-		delim = ')';
-		buf = P_matchingBracket(line, '(', ')', &i);
-	} else {
-		if(line[i] == '"') { delim = '"'; }
-		do{
-			buf = (char*)realloc(buf, charNum*sizeof(char));
-			buf[charNum - 1] = line[i];
-			charNum++;
-			i++;
-		} while((line[i] != delim) && (line[i]!= END));
-	}
-	if(line[i] == END ) { 
-		*end = -1; 
-	} else { 
-		if(line[i+1] == END) {
-		   	*end=-1; 
-		} else {
-			if(delim != DELIM) {
-				*end = i+2;
-			} else {
-				*end = i+1;
+	discardBlankChars(line, &pos);
+	switch(line[pos]) {
+		case '(':
+			buf = P_matchingBracket(line, '(', ')', &pos);
+			break;
+
+		case '"':
+			buf = P_getInBetween(line, '"', &pos);
+			break;
+
+		default:
+			while((line[pos] != delim) && (line[pos]!= END)) {
+				buf = (char*)realloc(buf, charNum*sizeof(char));
+				buf[charNum - 1] = line[pos];
+				charNum++;
+				pos++;
 			}
-		}
+	}
+	discardBlankChars(line, &pos);
+	if(line[pos] == END ) { 
+		*end = -1; 
+	} else {
+		*end = pos;
 	}
 	/*printf("P_getNextWord : %s\n", buf);*/
 	return buf;
