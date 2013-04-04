@@ -6,17 +6,21 @@
 #include <stdbool.h>
 
 #include "LinkedList.h"
+#include "BalancedBinaryTree.h"
 #include "Vars.h"
 
 typedef struct Identifier {
-	const char* id;
+	int id;
+	const char* name;
 	const char* args;
 	const char* returns;
 	void* (*function)(LinkedList);
 } Identifier;
 
-typedef Identifier* Identifiers;
+typedef BalancedBinaryTree Identifiers;
 
 Identifiers I_Identifiers();
 Identifier I_find(const char*, Identifiers);
+Identifier* I_create(const char*, const char*, const char*, void* (*)(LinkedList));
+
 #endif

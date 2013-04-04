@@ -91,6 +91,7 @@ char* P_process_string(const char* word) {
 	}
 	return buf;
 }
+
 char* P_process_call(const char* word) {
 	char* buf = NULL;
 	int i,len;
@@ -115,16 +116,6 @@ int* P_process_digit(const char* word) {
 	*r = atoi(word);
 	return r;
 }
-
-void atest(int a, int b) {
-	printf("%d\n", a+b);
-}
-
-/*void(*)(int, int) P_process_var(const char* word) {*/
-	/*char* r = (char*)malloc((strlen(word)+1)*sizeof(char));*/
-	/*strcpy(r, word);*/
-	/*return &atest;*/
-/*}*/
 
 Var* P_process(const char* word) {
 	errno = GOOD;

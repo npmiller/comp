@@ -48,7 +48,7 @@ void* E_eval(LinkedList l, Identifiers I, char** returns) {
 	void* res;
 	Identifier act = I_find(VLH_getName(l), I);
 	bool valid;
-	if(!(strcmp(act.id, "NotFound") == 0)) {
+	if(!(strcmp(act.name, "NotFound") == 0)) {
 		lt = LL_getNext(l);
 		E_checkAndEval(act.args, lt, I, &valid);
 		if(valid) {

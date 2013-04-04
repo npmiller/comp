@@ -25,38 +25,56 @@ void* print(LinkedList l) {
 	return NULL;
 }
 
+int I_getID(const char* string) {
+	int res = 0;
+	int i = 0;
+	while(string[i] != '\0') {
+		res += (int)string[i];
+		i++;
+	}
+	return res;
+}
+
+bool I_compare(void* a, void* b) {
+	return ((((Identifier*)a)->id) > (((Identifier*)b)->id));
+}
+
 Identifier I_find(const char* name, Identifiers I) {
-	int i;
+	Identifiers It = I;
+	int id = I_getID(name);
+	int currentId;
 	Identifier Id;
-    Id.id = "NotFound";
-	for(i=0;i<3;i++) {
-		if(strcmp(I[i].id,name) == 0) {
-			return I[i];
+    Id.name = "NotFound";
+	while(!BBT_isEmpty(It)) {
+		currentId = ((Identifier*)BBT_getValue(It))->id;
+		if(id == currentId) {
+			return *((Identifier*)BBT_getValue(It));
+		} else {
+			if(id > currentId) {
+				It = BBT_getLeftBranch(It);
+			} else {
+				It = BBT_getRightBranch(It);
+			}
 		}
 	}
 	return Id;
 }
+
+Identifier* I_create(const char* name, const char* args, const char* returns, void* (*function)(LinkedList)) {
+	Identifier* I = (Identifier*)malloc(sizeof(Identifier));
+	I->id = I_getID(name);
+	I->name = name;
+	I->args = args;
+	I->returns = returns;
+	I->function = function;
+	return I;
+}
+
 Identifiers I_Identifiers() {
-	Identifiers I = (Identifiers)malloc(10*sizeof(Identifier));
-	Identifier I_add;
-	I_add.id = "add";
-	I_add.args = "int int";
-	I_add.returns = "int";
-	I_add.function = add;
-	I[0] = I_add;
+	Identifiers I;
+	I = BBT_create((void*)I_create("add", "int int", "int", add), NULL, NULL);
+	BBT_add(I,(void*)I_create("substract", "int int", "int", substract), I_compare);
+	BBT_add(I,(void*)I_create("print", "string", "null", print), I_compare);
 
-	Identifier I_substract;
-	I_substract.id = "substract";
-	I_substract.args = "int int";
-	I_substract.returns = "int";
-	I_substract.function = substract;
-	I[1] = I_substract;
-
-	Identifier I_print;
-	I_print.id = "print";
-	I_print.args = "string";
-	I_print.returns = "string";
-	I_print.function = print;
-	I[2] = I_print;
 	return I;
 }
