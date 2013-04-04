@@ -14,8 +14,8 @@ void E_checkAndEval(const char* args, LinkedList l, Identifiers I, bool* valid) 
 	void* subRes;
 	char** returns = (char**)malloc(sizeof(char**));
 	while(!LL_isEmpty(sign) && !LL_isEmpty(l) && *valid) {
-		signType = (char*)(((Var*)sign->value)->name);
-		paramType = (char*)(((Var*)l->value)->type);
+		signType = VLH_getName(sign);
+		paramType = VLH_getType(l);
 		if(!(strcmp(signType,paramType) == 0)) {
 			if((strcmp(paramType,"sub")==0)) {
 				subRes = E_eval(P_parse(VLH_getString(l)), I, returns);
@@ -24,8 +24,8 @@ void E_checkAndEval(const char* args, LinkedList l, Identifiers I, bool* valid) 
 						printf("Wrong type in subexpression returns !\n");
 						*valid = false;
 					} else {
-						((Var*)(l->value))->type = (const char*) *returns;
-						((Var*)(l->value))->value = subRes;
+						VLH_setType(l, (const char*) *returns);
+						VLH_setValue(l, subRes);
 					}
 				}
 			} else {
@@ -46,7 +46,7 @@ void E_checkAndEval(const char* args, LinkedList l, Identifiers I, bool* valid) 
 void* E_eval(LinkedList l, Identifiers I, char** returns) {
 	LinkedList lt = l;
 	void* res;
-	Identifier act = I_find(((Var*)LL_getValue(l))->name, I);
+	Identifier act = I_find(VLH_getName(l), I);
 	bool valid;
 	if(!(strcmp(act.id, "NotFound") == 0)) {
 		lt = LL_getNext(l);
@@ -60,7 +60,7 @@ void* E_eval(LinkedList l, Identifiers I, char** returns) {
 			return NULL;
 		}
 	} else {
-		printf("Unknown Identifier : %s\n", ((Var*)LL_getValue(l))->name);
+		printf("Unknown Identifier : %s\n", VLH_getName(l));
 		return NULL;
 	}
 }
