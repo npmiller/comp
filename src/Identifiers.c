@@ -1,6 +1,7 @@
 #include "Identifiers.h"
 #include <string.h>
 
+
 void* add(LinkedList l) {
 	int a = VLH_getInt(l);
 	l = LL_getNext(l);
@@ -25,6 +26,42 @@ void* print(LinkedList l) {
 	return NULL;
 }
 
+void* call(LinkedList l) {
+	const char* sub = (const char*)LL_getValue(l);
+	l = LL_getNext(l);
+	const char* paramsString = (const char*)LL_getValue(l);
+	l = LL_getNext(l);
+	LinkedList params = P_parse(paramsString);
+	LinkedList ltemp = l;
+	while(!LL_isEmpty(ltemp)) {
+		params->value = ltemp->value;
+		ltemp = LL_getNext(ltemp);
+	}
+	LinkedList toEval = P_parse(sub);
+	return E_eval(toEval, params, &sub);
+}
+
+bool I_compare(void* a, void* b) {
+	return ((((Identifier*)a)->id) > (((Identifier*)b)->id));
+}
+
+void* function(LinkedList l) {
+	const char* name = VLH_getName(l);
+	l = LL_getNext(l);
+	const char* sign = VLH_getString(l);
+	const char* params = VLH_getName(l);
+	l = LL_getNext(l);
+	const char* returns = VLH_getName(l);
+	l = LL_getNext(l);
+	const char* sub = VLH_getString(l);
+	Identifier* I = I_create(name, sign, returns, call);
+	I->standard = false;
+	I->sub = sub;
+	I->params = params;
+	BBT_add(identifiers,I, I_compare);
+	return NULL;
+}
+
 int I_getID(const char* string) {
 	int res = 0;
 	int i = 0;
@@ -35,28 +72,30 @@ int I_getID(const char* string) {
 	return res;
 }
 
-bool I_compare(void* a, void* b) {
-	return ((((Identifier*)a)->id) > (((Identifier*)b)->id));
-}
-
-Identifier I_find(const char* name, Identifiers I) {
-	Identifiers It = I;
-	int id = I_getID(name);
-	int currentId;
-	Identifier Id;
-    Id.name = "NotFound";
-	while(!BBT_isEmpty(It)) {
-		currentId = ((Identifier*)BBT_getValue(It))->id;
-		if(id == currentId) {
-			return *((Identifier*)BBT_getValue(It));
+int compare2(void* a, void* b) {
+	int id = ((Identifier*)b)->id;
+	int val = *((int*)a);
+	if(val > id) {
+		return 1;
+	} else {
+		if(val == id) {
+			return 0;
 		} else {
-			if(id > currentId) {
-				It = BBT_getLeftBranch(It);
-			} else {
-				It = BBT_getRightBranch(It);
-			}
+			return -1;
 		}
 	}
+}
+
+Identifier I_find(const char* name) {
+	Identifier Id;
+	Identifier* p_Id;
+	int id = I_getID(name);
+	p_Id = (Identifier*)BBT_find(identifiers, (void*)&id, compare2);
+    if(p_Id == NULL) {
+		Id.name = "NotFound";
+	} else {
+		Id = *p_Id;
+	}	
 	return Id;
 }
 
@@ -66,6 +105,7 @@ Identifier* I_create(const char* name, const char* args, const char* returns, vo
 	I->name = name;
 	I->args = args;
 	I->returns = returns;
+	I->standard = true;
 	I->function = function;
 	return I;
 }
@@ -75,6 +115,7 @@ Identifiers I_Identifiers() {
 	I = BBT_create((void*)I_create("add", "int int", "int", add), NULL, NULL);
 	BBT_add(I,(void*)I_create("substract", "int int", "int", substract), I_compare);
 	BBT_add(I,(void*)I_create("print", "string", "null", print), I_compare);
+	BBT_add(I,(void*)I_create("function", "variable sign variable sub", "null", function), I_compare);
 
 	return I;
 }

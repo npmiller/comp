@@ -92,4 +92,25 @@ void BBT_free(BalancedBinaryTree b, void (*freeValue)(void*)) {
 	}
 }
 
+/* compare renvoir 0 si il s'agit de la valeur recherchée, 1 là ou le compare du add renvoyait vrai et -1 sinon */
+void* BBT_find(BalancedBinaryTree b, void* value, int (*compare)(void*, void*)) {
+	int c;
+	while(!BBT_isEmpty(b)) {
+		c = compare(value, BBT_getValue(b));
+		switch(c) {
+			case 0:
+				return BBT_getValue(b);
+				break;
+
+			case 1:
+				b = BBT_getLeftBranch(b);
+				break;
+
+			case -1:
+				b = BBT_getRightBranch(b);
+		}
+	}
+	return NULL;
+}
+
 

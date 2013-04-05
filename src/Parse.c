@@ -56,6 +56,10 @@ char* P_getNextWord(const char* line, int pos, int *end) {
 		case '(':
 			buf = P_matchingBracket(line, '(', ')', &pos);
 			break;
+		
+		case '{':
+			buf = P_matchingBracket(line, '{', '}', &pos);
+			break;
 
 		case '"':
 			buf = P_getInBetween(line, '"', &pos);
@@ -117,6 +121,39 @@ int* P_process_digit(const char* word) {
 	return r;
 }
 
+void P_process_sign(const char* word, const char** name, void** value) {
+	int i = 1;
+	char* nameBuffer = NULL;
+	int numNameBuffer = 1;
+	char* valueBuffer = NULL;
+	int numValueBuffer = 1;
+	char** currentBuffer = &nameBuffer;
+	int* currentNum = &numNameBuffer;
+
+	while(word[i]!='\0') {
+		discardBlankChars(word, &i);
+		while(word[i]!=':' && word[i]!=' ') {
+			*currentBuffer = (char*)realloc(*currentBuffer, (*currentNum)*sizeof(char));
+			(*currentBuffer)[*currentNum - 1] = word[i];
+			i++;
+			(*currentNum)++;
+		}
+		*currentBuffer = (char*)realloc(*currentBuffer, (*currentNum)*sizeof(char));
+		(*currentBuffer)[*currentNum - 1] = ' ';
+		(*currentNum)++;
+		if(currentBuffer == &nameBuffer) {
+			currentBuffer = &valueBuffer;
+			currentNum = &numValueBuffer;
+		} else {
+			currentBuffer = &nameBuffer;
+			currentNum = &numNameBuffer;
+		}
+		i++;
+	}
+	*name = nameBuffer;
+	*value = (void*)valueBuffer;
+}
+
 Var* P_process(const char* word) {
 	errno = GOOD;
 	Var *p = (Var*)malloc(sizeof(Var));
@@ -133,6 +170,10 @@ Var* P_process(const char* word) {
 		p->value = P_process_digit(word);
 		p->type = "int";
 		return p;
+	} else if(word[0] == '{') {
+		p->type = "sign";
+		P_process_sign(word, &(p->name), &(p->value));
+		return p;
 	} else {
 		/*p->value = P_process_var(word);*/
 		p->type = "variable";
@@ -140,6 +181,7 @@ Var* P_process(const char* word) {
 		return p;
 	}
 }
+
 LinkedList P_parse(const char* line) {
 	int end = 0;
 	char *word;

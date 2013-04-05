@@ -10,6 +10,7 @@
 #define NOT_A_NUMBER 3
 
 #include "LinkedList.h"
+#include "BalancedBinaryTree.h"
 #include <stdlib.h>
 #include <errno.h>
 

@@ -16,5 +16,6 @@ void LL_free(LinkedList*, void (*freeValue)(void*));
 LinkedList LL_getNext(LinkedList);
 void* LL_getValue(LinkedList);
 void LL_setNext(LinkedList, LinkedList);
+void* LL_find(LinkedList, void*,  bool (*)(void*, void*));
 
 #endif

@@ -7,8 +7,8 @@
 #include "Vars.h"
 #include "Identifiers.h"
 
-void* E_eval(LinkedList, Identifiers, char**);
-void E_checkAndEval(const char*, LinkedList, Identifiers, bool*);
+void* E_eval(LinkedList, LinkedList, char**);
+void E_checkAndEval(const char*, LinkedList, LinkedList, bool*);
 void E_printResult(const char*, void*);
 
 #endif

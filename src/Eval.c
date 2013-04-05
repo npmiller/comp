@@ -2,13 +2,16 @@
 #include "Parse.h"
 #include <string.h>
 
-void E_checkAndEval(const char* args, LinkedList l, Identifiers I, bool* valid) {
-	static int calls = 0;
-	calls++;
-	/*printf("%d\n", calls);*/
-	/*printf("%s\n", args);*/
-	*valid = true;
+bool match(void* a, void* b) {
+   if(strcmp((char*)b,(char*)((Var*)a)->value)) {
+	   return true;
+   }
+   return false;
+}
+
+void E_checkAndEval(const char* args, LinkedList l, LinkedList formalParameters, bool* valid) {
 	LinkedList sign = P_parse(args);
+	Var* varTmp;
 	char* signType;
 	char* paramType;
 	void* subRes;
@@ -18,7 +21,7 @@ void E_checkAndEval(const char* args, LinkedList l, Identifiers I, bool* valid) 
 		paramType = VLH_getType(l);
 		if(!(strcmp(signType,paramType) == 0)) {
 			if((strcmp(paramType,"sub")==0)) {
-				subRes = E_eval(P_parse(VLH_getString(l)), I, returns);
+				subRes = E_eval(P_parse(VLH_getString(l)), formalParameters, returns);
 				if(subRes!=NULL) {
 					if(!strcmp(signType,(const char*) *returns)==0) {
 						printf("Wrong type in subexpression returns !\n");
@@ -29,8 +32,19 @@ void E_checkAndEval(const char* args, LinkedList l, Identifiers I, bool* valid) 
 					}
 				}
 			} else {
-				printf("Wrong types, expected : %s, got : %s \n", signType, paramType);
-				*valid = false;
+				if((strcmp(paramType, "variable")==0)) {
+					if(formalParameters != NULL) {
+						varTmp = LL_find(formalParameters, VLH_getName(l), match);
+						if(varTmp==NULL) {
+							*valid = false;
+						}
+						VLH_setType(l, signType);
+						VLH_setValue(l, varTmp->value);
+					}
+				} else {
+					printf("Wrong types, expected : %s, got : %s \n", signType, paramType);
+					*valid = false;
+				}
 			}
 		}
 		l = LL_getNext(l);
@@ -43,14 +57,18 @@ void E_checkAndEval(const char* args, LinkedList l, Identifiers I, bool* valid) 
 	}	
 }
 
-void* E_eval(LinkedList l, Identifiers I, char** returns) {
+void* E_eval(LinkedList l, LinkedList formalParameters, char** returns) {
 	LinkedList lt = l;
 	void* res;
-	Identifier act = I_find(VLH_getName(l), I);
-	bool valid;
+	Identifier act = I_find(VLH_getName(l));
+	bool valid = true;
 	if(!(strcmp(act.name, "NotFound") == 0)) {
 		lt = LL_getNext(l);
-		E_checkAndEval(act.args, lt, I, &valid);
+		E_checkAndEval(act.args, lt, formalParameters, &valid);
+		if(!act.standard) {
+			LL_add(&lt, act.params);
+			LL_add(&lt, act.sub);
+		}
 		if(valid) {
 			res = act.function(lt);
 			*returns = (char*)malloc((strlen(act.returns)+1) * sizeof(char));

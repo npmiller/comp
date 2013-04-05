@@ -8,7 +8,7 @@ ldflags= -L$(lib) -lreadline -llang
 comp: $(src)/comp.o $(lib)/liblang.a
 	$(cc) $(ldflags) -o comp $^
 
-$(lib)/liblang.a: $(src)/Parse.o $(src)/LinkedList.o $(src)/Identifiers.o $(src)/Eval.o $(src)/Vars.o
+$(lib)/liblang.a: $(src)/Parse.o $(src)/LinkedList.o $(src)/Identifiers.o $(src)/Eval.o $(src)/Vars.o $(src)/BalancedBinaryTree.o
 	ar -r $@ $^ 
 
 $(src)/%.o : $(src)/%.c

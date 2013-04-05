@@ -25,4 +25,5 @@ void BBT_add(BalancedBinaryTree, void*, bool (*)(void*, void*));
 int BBT_isBalanced(BalancedBinaryTree);
 int BBT_heigth(BalancedBinaryTree, int);
 
+void* BBT_find(BalancedBinaryTree, void*, int (*)(void*, void*));
 #endif

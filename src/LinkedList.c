@@ -40,3 +40,13 @@ LinkedList LL_getNext(LinkedList l) {
 void* LL_getValue(LinkedList l) {
 	return l->value;
 }
+
+void* LL_find(LinkedList l,void* val,  bool (*match)(void*, void*)) {
+	while(!LL_isEmpty(l)) {
+		if(match(LL_getValue(l), val)) {
+			return LL_getValue(l);
+		}
+		l = LL_getNext(l);
+	}
+	return NULL;
+}

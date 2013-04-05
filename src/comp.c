@@ -16,12 +16,12 @@
 	/*}*/
 /*}*/
 
-void process(char *a, Identifiers Is) {
+void process(char *a) {
 	LinkedList l;
 	char** returns = (char**)malloc(sizeof(char*));
 	void* res;
 	l = P_parse(a);
-	res = E_eval(l, Is, returns);
+	res = E_eval(l, NULL, returns);
 	if(res != NULL) {
 		E_printResult(*returns, res);
 	}
@@ -30,11 +30,10 @@ void process(char *a, Identifiers Is) {
 
 int main() {
 	char *a;	
-	Identifiers Is;
-	Is = I_Identifiers();
+	identifiers = I_Identifiers();
 	while(true) {
 		a = readline("> ");
-		process(a, Is);
+		process(a);
 	}
 	free(a);
 	return EXIT_SUCCESS;
