@@ -6,8 +6,9 @@
 #include "LinkedList.h"
 #include "Vars.h"
 #include "Identifiers.h"
+#include "Type.h"
 
-void* E_eval(LinkedList, LinkedList, char**);
+Var E_eval(LinkedList, LinkedList);
 void E_checkAndEval(const char*, LinkedList, LinkedList, bool*);
 void E_printResult(const char*, void*);
 

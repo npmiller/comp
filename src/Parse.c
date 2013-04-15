@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include "Type.h"
 
 
 char* P_matchingBracket(const char* string, const char delimO, const char delimF, int* pos) {
@@ -157,26 +158,27 @@ void P_process_sign(const char* word, const char** name, void** value) {
 Var* P_process(const char* word) {
 	errno = GOOD;
 	Var *p = (Var*)malloc(sizeof(Var));
+	V_init(p);
 	if(word[0] == '"') {
 		p->value = P_process_string(word);
-		p->type = "string";
+		p->type = STRING;
 		return p;
 	} else if(word[0] == '(') {
 		p->value = P_process_call(word);
 		/*printf("%s\n", word);*/
-		p->type = "sub";
+		p->type = SUBEXPRESSION;
 		return p;
 	} else if(isdigit(word[0])) {
 		p->value = P_process_digit(word);
-		p->type = "int";
+		p->type = NUMBER;
 		return p;
 	} else if(word[0] == '{') {
-		p->type = "sign";
+		p->type = SIGNATURE;
 		P_process_sign(word, &(p->name), &(p->value));
 		return p;
 	} else {
 		/*p->value = P_process_var(word);*/
-		p->type = "variable";
+		p->type = VARIABLE;
 		p->name = word;
 		return p;
 	}

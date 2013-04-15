@@ -2,32 +2,41 @@
 #include <string.h>
 
 
-void* add(LinkedList l) {
+Var add(LinkedList l) {
+	Var vRes;
+	V_init(&vRes);
 	int a = VLH_getInt(l);
 	l = LL_getNext(l);
 	int b = VLH_getInt(l);
+	V_setType(&vRes, NUMBER);
 	int* res = (int*)malloc(sizeof(int));
 	*res = a + b;
-	return res;
+	V_setValue(&vRes, (void*)res);
+	return vRes;
 }
 
-void* substract(LinkedList l) {
+Var substract(LinkedList l) {
+	Var vRes;
+	V_init(&vRes);
 	int a = VLH_getInt(l);
 	l = LL_getNext(l);
 	int b = VLH_getInt(l);
 	int* res = (int*)malloc(sizeof(int));
 	*res = a - b;
-	return res;
+	V_setType(&vRes, NUMBER);
+	V_setValue(&vRes, (void*)res);
+	return vRes;
 }
 
-void* print(LinkedList l) {
+Var print(LinkedList l) {
+	Var v;
+	V_init(&v);
 	char* res = VLH_getString(l);
 	printf("%s\n", res);
-	return NULL;
+	return v;
 }
 
-void* call(LinkedList l) {
-	char** returns = (char**)malloc(sizeof(char*));
+Var call(LinkedList l) {
 	const char* sub = (const char*)LL_getValue(l);
 	l = LL_getNext(l);
 	const char* paramsString = (const char*)LL_getValue(l);
@@ -40,28 +49,28 @@ void* call(LinkedList l) {
 		ltemp = LL_getNext(ltemp);
 	}
 	LinkedList toEval = P_parse(sub);
-	return E_eval(toEval, params, returns);
+	return E_eval(toEval, params);
 }
 
 bool I_compare(void* a, void* b) {
 	return ((((Identifier*)a)->id) > (((Identifier*)b)->id));
 }
 
-void* function(LinkedList l) {
+Var function(LinkedList l) {
+	Var v;
+	V_init(&v);
 	const char* name = VLH_getName(l);
 	l = LL_getNext(l);
 	const char* sign = VLH_getString(l);
 	const char* params = VLH_getName(l);
 	l = LL_getNext(l);
-	const char* returns = VLH_getName(l);
-	l = LL_getNext(l);
 	const char* sub = VLH_getString(l);
-	Identifier* I = I_create(name, sign, returns, call);
+	Identifier* I = I_create(name, sign, call);
 	I->standard = false;
 	I->sub = sub;
 	I->params = params;
-	BBT_add(identifiers,I, I_compare);
-	return NULL;
+	BBT_add(identifiers ,I, I_compare);
+	return v;
 }
 
 int I_getID(const char* string) {
@@ -101,12 +110,11 @@ Identifier I_find(const char* name) {
 	return Id;
 }
 
-Identifier* I_create(const char* name, const char* args, const char* returns, void* (*function)(LinkedList)) {
+Identifier* I_create(const char* name, const char* args, Var (*function)(LinkedList)) {
 	Identifier* I = (Identifier*)malloc(sizeof(Identifier));
 	I->id = I_getID(name);
 	I->name = name;
 	I->args = args;
-	I->returns = returns;
 	I->standard = true;
 	I->function = function;
 	return I;
@@ -114,10 +122,10 @@ Identifier* I_create(const char* name, const char* args, const char* returns, vo
 
 Identifiers I_Identifiers() {
 	Identifiers I;
-	I = BBT_create((void*)I_create("add", "int int", "int", add), NULL, NULL);
-	BBT_add(I,(void*)I_create("substract", "int int", "int", substract), I_compare);
-	BBT_add(I,(void*)I_create("print", "string", "null", print), I_compare);
-	BBT_add(I,(void*)I_create("function", "variable sign variable sub", "null", function), I_compare);
+	I = BBT_create((void*)I_create("add", "int int", add), NULL, NULL);
+	BBT_add(I,(void*)I_create("substract", "int int", substract), I_compare);
+	BBT_add(I,(void*)I_create("print", "string", print), I_compare);
+	BBT_add(I,(void*)I_create("function", "variable sign variable sub", function), I_compare);
 
 	return I;
 }

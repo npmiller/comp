@@ -9,33 +9,31 @@ bool match(void* a, void* b) {
 	return false;
 }
 
-void trySubExpression(const char* type, const char* expectedType, LinkedList l, LinkedList formalParameters, bool* valid) {
-	if((strcmp(type,"sub")==0)) {
-		void* subRes;
-		char** returns = (char**)malloc(sizeof(char**));
-		subRes = E_eval(P_parse(VLH_getString(l)), formalParameters, returns);
-		if(subRes!=NULL) {
-			if(!strcmp(expectedType,(const char*) *returns)==0) {
+void trySubExpression(Type type, const char* expectedType, LinkedList l, LinkedList formalParameters, bool* valid) {
+	if(T_equals("subexpression", type)) {
+		Var* subRes;
+		*subRes = E_eval(P_parse(VLH_getString(l)), formalParameters);
+		if(!V_isEmpty(*subRes)) {
+			if(!T_equals(expectedType, V_getType(*subRes))) {
 				printf("Wrong type in subexpression returns !\n");
 				*valid = false;
 			} else {
-				VLH_setType(l, (const char*) *returns);
-				VLH_setValue(l, subRes);
+				LL_setValue(l, (void*)subRes);
 			}
 		}
 	}
 
 }
 
-void tryVariable(const char* type, const char* expectedType, LinkedList l, LinkedList formalParameters, bool* valid) {
-	if((strcmp(type, "variable")==0)) {
+void tryVariable(Type type, const char* expectedType, LinkedList l, LinkedList formalParameters, bool* valid) {
+	if(T_equals("variable", type)) {
 		Var* varTmp;
 		if(formalParameters != NULL) {
 			varTmp = LL_find(formalParameters, VLH_getName(l), match);
 			*valid = (varTmp!=NULL);
 			if(*valid) {
-				VLH_setType(l, expectedType);
-				VLH_setValue(l, varTmp->value);
+				VLH_setType(l, V_getType(*varTmp));
+				VLH_setValue(l, V_getValue(*varTmp));
 			}
 		}
 	}
@@ -45,16 +43,16 @@ void tryVariable(const char* type, const char* expectedType, LinkedList l, Linke
 void E_checkAndEval(const char* args, LinkedList l, LinkedList formalParameters, bool* valid) {
 	LinkedList sign = P_parse(args);
 	char* signType;
-	char* paramType;
+	Type paramType;
 	*valid = true;
 	while(!LL_isEmpty(sign) && !LL_isEmpty(l) && *valid) {
 		signType = VLH_getName(sign);
 		paramType = VLH_getType(l);
-		if(!(strcmp(signType,paramType) == 0)) {
+		if(!T_equals(signType, paramType)) {
 			trySubExpression(paramType, signType, l, formalParameters, valid);
 			tryVariable(paramType, signType, l, formalParameters, valid);
 			if(!(*valid)) {
-				printf("Wrong types, expected : '%s', got : '%s' \n", signType, paramType);
+				printf("Wrong types, expected : '%s', got : '%s' \n", signType, T_toString(paramType));
 			}
 		}
 		l = LL_getNext(l);
@@ -67,9 +65,8 @@ void E_checkAndEval(const char* args, LinkedList l, LinkedList formalParameters,
 	}	
 }
 
-void* E_eval(LinkedList l, LinkedList formalParameters, char** returns) {
+Var E_eval(LinkedList l, LinkedList formalParameters) {
 	LinkedList lt = l;
-	void* res;
 	Identifier act = I_find(VLH_getName(l));
 	bool valid = true;
 	if(!(strcmp(act.name, "NotFound") == 0)) {
@@ -80,16 +77,17 @@ void* E_eval(LinkedList l, LinkedList formalParameters, char** returns) {
 			LL_add(&lt, (void*)act.sub);
 		}
 		if(valid) {
-			res = act.function(lt);
-			*returns = (char*)malloc((strlen(act.returns)+1) * sizeof(char));
-			strcpy(*returns, act.returns);
-			return res;
+			return act.function(lt);
 		} else {
-			return NULL;
+			Var v;
+			V_init(&v);
+			return v;
 		}
 	} else {
 		printf("Unknown Identifier : '%s'\n", VLH_getName(l));
-		return NULL;
+		Var v;
+		V_init(&v);
+		return v;
 	}
 }
 

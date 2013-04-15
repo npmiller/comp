@@ -7,16 +7,30 @@
 #include "LinkedList.h"
 #include "Identifiers.h"
 #include "Eval.h"
+#include "Type.h"
+
+void printResult(Var v) {
+	Type t = V_getType(v);
+	if(t!=NONE) {
+		switch(t) {
+			case NUMBER :
+				printf("%d\n", *((int*)V_getValue(v)));
+				break;
+			case STRING :
+				printf("%s\n", (char*)V_getValue(v));
+				break;
+			default :
+				printf("Erreur, retour non affichable (subexpression, variable, signature)");
+		}
+	}
+}
 
 void process(char *a) {
 	LinkedList l;
-	char** returns = (char**)malloc(sizeof(char*));
-	void* res;
+	Var res;
 	l = P_parse(a);
-	res = E_eval(l, NULL, returns);
-	if(res != NULL) {
-		E_printResult(*returns, res);
-	}
+	res = E_eval(l, NULL);
+	printResult(res);
 	/*printf("%d\n", *((int*)((Var*)(l->value))->value));*/
 }
 

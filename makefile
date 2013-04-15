@@ -16,7 +16,7 @@ tests: $(tests)/testMain.o $(lib)/libtests.a $(lib)/liblang.a
 $(lib)/libtests.a: $(tests)/LinkedList_tests.o
 	ar -r $@ $^
 
-$(lib)/liblang.a: $(src)/Parse.o $(src)/LinkedList.o $(src)/Identifiers.o $(src)/Eval.o $(src)/Vars.o $(src)/BalancedBinaryTree.o
+$(lib)/liblang.a: $(src)/Parse.o $(src)/LinkedList.o $(src)/Identifiers.o $(src)/Eval.o $(src)/Vars.o $(src)/BalancedBinaryTree.o $(src)/Type.o
 	ar -r $@ $^ 
 
 $(src)/%.o : $(src)/%.c
