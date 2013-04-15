@@ -20,6 +20,7 @@ void* V_getValue(Var);
 void V_setValue(Var*, void*);
 void V_setType(Var*, Type);
 void V_setName(Var*, const char*);
+void V_free(void*);
 
 /* VLH : Variable-LinkedList Helpers */
 Var VLH_getVar(LinkedList);

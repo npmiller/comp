@@ -60,16 +60,24 @@ Var function(LinkedList l) {
 	Var v;
 	V_init(&v);
 	const char* name = VLH_getName(l);
+	char* namecp = (char*)malloc((strlen(name)+1)*sizeof(char));
+	strcpy(namecp, name);
 	l = LL_getNext(l);
 	const char* sign = VLH_getString(l);
+	char* signcp = (char*)malloc((strlen(sign)+1)*sizeof(char));
+	strcpy(signcp, sign);
 	const char* params = VLH_getName(l);
+	char* paramscp = (char*)malloc((strlen(params)+1)*sizeof(char));
+	strcpy(paramscp, params);
 	l = LL_getNext(l);
 	const char* sub = VLH_getString(l);
-	Identifier* I = I_create(name, sign, call);
+	char* subcp = (char*)malloc((strlen(sub)+1)*sizeof(char));
+	strcpy(subcp, sub);
+	Identifier* I = I_create(namecp, signcp, call);
 	I->standard = false;
-	I->sub = sub;
-	I->params = params;
-	BBT_add(identifiers ,I, I_compare);
+	I->sub = subcp;
+	I->params = paramscp;
+	BBT_add(identifiers, I, I_compare);
 	return v;
 }
 
@@ -102,7 +110,7 @@ Identifier I_find(const char* name) {
 	Identifier* p_Id;
 	int id = I_getID(name);
 	p_Id = (Identifier*)BBT_find(identifiers, (void*)&id, compare2);
-    if(p_Id == NULL) {
+	if(p_Id == NULL) {
 		Id.name = "NotFound";
 	} else {
 		Id = *p_Id;
@@ -117,15 +125,17 @@ Identifier* I_create(const char* name, const char* args, Var (*function)(LinkedL
 	I->args = args;
 	I->standard = true;
 	I->function = function;
+	I->sub = NULL;
+	I->params = NULL;
 	return I;
 }
 
 Identifiers I_Identifiers() {
 	Identifiers I;
-	I = BBT_create((void*)I_create("add", "int int", add), NULL, NULL);
-	BBT_add(I,(void*)I_create("substract", "int int", substract), I_compare);
+	I = BBT_create((void*)I_create("add", "number number", add), NULL, NULL);
+	BBT_add(I,(void*)I_create("substract", "number number", substract), I_compare);
 	BBT_add(I,(void*)I_create("print", "string", print), I_compare);
-	BBT_add(I,(void*)I_create("function", "variable sign variable sub", function), I_compare);
+	BBT_add(I,(void*)I_create("function", "variable signature subexpression", function), I_compare);
 
 	return I;
 }

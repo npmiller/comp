@@ -11,11 +11,11 @@ bool match(void* a, void* b) {
 
 void trySubExpression(Type type, const char* expectedType, LinkedList l, LinkedList formalParameters, bool* valid) {
 	if(T_equals("subexpression", type)) {
-		Var* subRes;
+		Var* subRes = (Var*)malloc(sizeof(Var));
 		*subRes = E_eval(P_parse(VLH_getString(l)), formalParameters);
 		if(!V_isEmpty(*subRes)) {
 			if(!T_equals(expectedType, V_getType(*subRes))) {
-				printf("Wrong type in subexpression returns !\n");
+				printf("Wrong type in subexpression returns : %s\nres : %d\n", VLH_getString(l), *((int*)V_getValue(*subRes)));
 				*valid = false;
 			} else {
 				LL_setValue(l, (void*)subRes);
@@ -42,6 +42,7 @@ void tryVariable(Type type, const char* expectedType, LinkedList l, LinkedList f
 
 void E_checkAndEval(const char* args, LinkedList l, LinkedList formalParameters, bool* valid) {
 	LinkedList sign = P_parse(args);
+	LinkedList signTmp = sign;
 	char* signType;
 	Type paramType;
 	*valid = true;
@@ -62,15 +63,16 @@ void E_checkAndEval(const char* args, LinkedList l, LinkedList formalParameters,
 	if((LL_isEmpty(sign) && !LL_isEmpty(l)) || (!LL_isEmpty(sign) && LL_isEmpty(l))) {
 		printf("Wrong number of arguments !\n");
 		*valid = false;
-	}	
+	}
+	LL_free(&signTmp, V_free);	
 }
 
 Var E_eval(LinkedList l, LinkedList formalParameters) {
 	LinkedList lt = l;
-	Identifier act = I_find(VLH_getName(l));
+	Identifier act = I_find(VLH_getName(lt));
 	bool valid = true;
 	if(!(strcmp(act.name, "NotFound") == 0)) {
-		lt = LL_getNext(l);
+		lt = LL_getNext(lt);
 		E_checkAndEval(act.args, lt, formalParameters, &valid);
 		if(!act.standard) {
 			LL_add(&lt, (void*)act.params);

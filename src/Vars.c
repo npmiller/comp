@@ -6,6 +6,13 @@ void V_init(Var* v) {
 	v->value = NULL;
 }
 
+void V_free(void* v) {
+	Var* var = (Var*)v;
+	free((void*)var->name);
+	free((void*)var->value);
+	free(var);
+}
+
 bool V_isEmpty(Var v) {
 	return ((v.name == NULL) && (v.type == NONE) && (v.value == NULL));
 }

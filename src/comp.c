@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <readline/readline.h>
+#include <readline/history.h>
 
 #include "Parse.h"
 #include "Vars.h"
@@ -31,6 +32,7 @@ void process(char *a) {
 	l = P_parse(a);
 	res = E_eval(l, NULL);
 	printResult(res);
+	LL_free(&l, V_free);
 	/*printf("%d\n", *((int*)((Var*)(l->value))->value));*/
 }
 
@@ -39,6 +41,7 @@ int main() {
 	identifiers = I_Identifiers();
 	while(true) {
 		a = readline("> ");
+		add_history(a);
 		process(a);
 		free(a);
 	}

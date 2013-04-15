@@ -25,6 +25,9 @@ char* P_matchingBracket(const char* string, const char delimO, const char delimF
 		buf[charNum-1] = string[*pos];
 		(*pos)++;
 	}
+	charNum++;
+	buf = (char*)realloc(buf, charNum*sizeof(char));
+	buf[charNum-1] = '\0';
 	(*pos)++; /* met la position au charactère suivant la parenthèse fermante */
 	return buf;
 }
@@ -38,6 +41,8 @@ char * P_getInBetween(const char* string, char delim, int* pos) {
 		charNum++;
 		(*pos)++;
 	} while(string[*pos] != delim);
+	buf = (char*)realloc(buf, charNum*sizeof(char));
+	buf[charNum - 1] = '\0';
 	(*pos)++;
 	return buf;
 }
@@ -73,6 +78,8 @@ char* P_getNextWord(const char* line, int pos, int *end) {
 				charNum++;
 				pos++;
 			}
+			buf = (char*)realloc(buf, charNum*sizeof(char));
+			buf[charNum - 1] = '\0';
 	}
 	discardBlankChars(line, &pos);
 	if(line[pos] == END ) { 
@@ -80,7 +87,6 @@ char* P_getNextWord(const char* line, int pos, int *end) {
 	} else {
 		*end = pos;
 	}
-	/*printf("P_getNextWord : %s\n", buf);*/
 	return buf;
 }
 
@@ -90,10 +96,11 @@ char* P_process_string(const char* word) {
 	char *buf = NULL;
 	int i;
 	int len = strlen(word);
-	buf = (char*)malloc((len-1)*sizeof(char));
+	buf = (char*)malloc((len)*sizeof(char));
 	for(i=1; i<len; i++) {
 		buf[i-1] = word[i];
 	}
+	buf[i-1]='\0';
 	return buf;
 }
 
@@ -101,10 +108,11 @@ char* P_process_call(const char* word) {
 	char* buf = NULL;
 	int i,len;
 	len = strlen(word);
-    	buf = (char*)malloc((len-1)*sizeof(char));
+    	buf = (char*)malloc((len)*sizeof(char));
 	for(i=1; i<len; i++) {
 		buf[i-1] = word[i];
 	}
+	buf[i-1]='\0';
 	return buf;
 }
 
@@ -165,7 +173,6 @@ Var* P_process(const char* word) {
 		return p;
 	} else if(word[0] == '(') {
 		p->value = P_process_call(word);
-		/*printf("%s\n", word);*/
 		p->type = SUBEXPRESSION;
 		return p;
 	} else if(isdigit(word[0])) {
