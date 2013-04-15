@@ -28,6 +28,19 @@ Var substract(LinkedList l) {
 	return vRes;
 }
 
+Var multiply(LinkedList l) {
+	Var vRes;
+	V_init(&vRes);
+	int a = VLH_getInt(l);
+	l = LL_getNext(l);
+	int b = VLH_getInt(l);
+	int* res = (int*)malloc(sizeof(int));
+	*res = a * b;
+	V_setType(&vRes, NUMBER);
+	V_setValue(&vRes, (void*)res);
+	return vRes;
+}
+
 Var print(LinkedList l) {
 	Var v;
 	V_init(&v);
@@ -78,6 +91,44 @@ Var function(LinkedList l) {
 	I->sub = subcp;
 	I->params = paramscp;
 	BBT_add(identifiers, I, I_compare);
+	return v;
+}
+
+Var my_exit(LinkedList l) {
+	BBT_free(identifiers, free);
+	exit(0);
+}
+
+Var my_if(LinkedList l) {
+	LinkedList formalParameters = LL_getValue(l);
+	l = LL_getNext(l);
+	const char* boolean = VLH_getString(l);
+	l = LL_getNext(l);
+	const char* sub1 = VLH_getString(l);
+	l = LL_getNext(l);
+	const char* sub2 = VLH_getString(l);
+	if(strcmp(boolean, "true")==0) {
+		return E_eval(P_parse(sub1), formalParameters);
+	} else {
+		return E_eval(P_parse(sub2), formalParameters);
+	}
+}
+
+Var equals(LinkedList l) {
+	Var v;
+	V_init(&v);
+	v.type = BOOLEAN;
+	int a,b;
+	a = VLH_getInt(l);
+	l = LL_getNext(l);
+	b = VLH_getInt(l);
+	if(a == b) {
+		v.value = (char*)malloc(sizeof(char)*5);
+		strcpy(v.value, "true");
+	} else {
+		v.value = (char*)malloc(sizeof(char)*6);
+		strcpy(v.value, "false");
+	}
 	return v;
 }
 
@@ -136,6 +187,10 @@ Identifiers I_Identifiers() {
 	BBT_add(I,(void*)I_create("substract", "number number", substract), I_compare);
 	BBT_add(I,(void*)I_create("print", "string", print), I_compare);
 	BBT_add(I,(void*)I_create("function", "variable signature subexpression", function), I_compare);
+	BBT_add(I,(void*)I_create("exit", "", my_exit), I_compare);
+	BBT_add(I,(void*)I_create("if", "boolean subexpression subexpression", my_if), I_compare);
+	BBT_add(I,(void*)I_create("equals", "number number", equals), I_compare);
+	BBT_add(I,(void*)I_create("multiply", "number number", multiply), I_compare);
 
 	return I;
 }

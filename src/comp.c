@@ -20,6 +20,9 @@ void printResult(Var v) {
 			case STRING :
 				printf("%s\n", (char*)V_getValue(v));
 				break;
+			case BOOLEAN :
+				printf("%s\n", (char*)V_getValue(v));
+				break;
 			default :
 				printf("Erreur, retour non affichable (subexpression, variable, signature)");
 		}
@@ -32,6 +35,7 @@ void process(char *a) {
 	l = P_parse(a);
 	res = E_eval(l, NULL);
 	printResult(res);
+	free(V_getValue(res));
 	LL_free(&l, V_free);
 	/*printf("%d\n", *((int*)((Var*)(l->value))->value));*/
 }

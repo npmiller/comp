@@ -41,7 +41,12 @@ void tryVariable(Type type, const char* expectedType, LinkedList l, LinkedList f
 }
 
 void E_checkAndEval(const char* args, LinkedList l, LinkedList formalParameters, bool* valid) {
-	LinkedList sign = P_parse(args);
+	LinkedList sign;
+	if(strcmp(args, "")==0) {
+		sign = NULL;
+	} else {
+		sign = P_parse(args);
+	}
 	LinkedList signTmp = sign;
 	char* signType;
 	Type paramType;
@@ -77,6 +82,9 @@ Var E_eval(LinkedList l, LinkedList formalParameters) {
 		if(!act.standard) {
 			LL_add(&lt, (void*)act.params);
 			LL_add(&lt, (void*)act.sub);
+		}
+		if(strcmp(act.name, "if") == 0) {
+			LL_add(&lt, (void*)formalParameters);
 		}
 		if(valid) {
 			return act.function(lt);

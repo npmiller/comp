@@ -32,7 +32,7 @@ char* P_matchingBracket(const char* string, const char delimO, const char delimF
 	return buf;
 }
 
-char * P_getInBetween(const char* string, char delim, int* pos) {
+char* P_getInBetween(const char* string, char delim, int* pos) {
 	char* buf = NULL;
 	int charNum = 1;
 	do{
@@ -101,6 +101,7 @@ char* P_process_string(const char* word) {
 		buf[i-1] = word[i];
 	}
 	buf[i-1]='\0';
+	free((void*)word);
 	return buf;
 }
 
@@ -113,6 +114,7 @@ char* P_process_call(const char* word) {
 		buf[i-1] = word[i];
 	}
 	buf[i-1]='\0';
+	free((void*)word);
 	return buf;
 }
 
@@ -127,6 +129,7 @@ int* P_process_digit(const char* word) {
 		/*}*/
 	/*}*/
 	*r = atoi(word);
+	free((void*)word);
 	return r;
 }
 
@@ -161,6 +164,7 @@ void P_process_sign(const char* word, const char** name, void** value) {
 	}
 	*name = nameBuffer;
 	*value = (void*)valueBuffer;
+	free((void*)word);
 }
 
 Var* P_process(const char* word) {
@@ -182,6 +186,10 @@ Var* P_process(const char* word) {
 	} else if(word[0] == '{') {
 		p->type = SIGNATURE;
 		P_process_sign(word, &(p->name), &(p->value));
+		return p;
+	} else if ((strcmp(word, "true")==0) || (strcmp(word, "false")==0)) {
+		p->type = BOOLEAN;
+		p->value = word;
 		return p;
 	} else {
 		/*p->value = P_process_var(word);*/
