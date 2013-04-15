@@ -8,14 +8,6 @@
 #include "Identifiers.h"
 #include "Eval.h"
 
-/*void printArgs(Operation op) {*/
-	/*Link l = op.params;*/
-	/*while(l!=NULL) {*/
-		/*printf("%s\n", l->value);*/
-		/*l = l->next;*/
-	/*}*/
-/*}*/
-
 void process(char *a) {
 	LinkedList l;
 	char** returns = (char**)malloc(sizeof(char*));
@@ -34,7 +26,7 @@ int main() {
 	while(true) {
 		a = readline("> ");
 		process(a);
+		free(a);
 	}
-	free(a);
 	return EXIT_SUCCESS;
 }

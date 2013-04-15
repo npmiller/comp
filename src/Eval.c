@@ -3,48 +3,58 @@
 #include <string.h>
 
 bool match(void* a, void* b) {
-   if(strcmp((char*)b,(char*)((Var*)a)->value)) {
-	   return true;
-   }
-   return false;
+	if(strcmp(V_getName(*((Var*)a)), (char*)b)==0) {
+		return true;
+	}
+	return false;
+}
+
+void trySubExpression(const char* type, const char* expectedType, LinkedList l, LinkedList formalParameters, bool* valid) {
+	if((strcmp(type,"sub")==0)) {
+		void* subRes;
+		char** returns = (char**)malloc(sizeof(char**));
+		subRes = E_eval(P_parse(VLH_getString(l)), formalParameters, returns);
+		if(subRes!=NULL) {
+			if(!strcmp(expectedType,(const char*) *returns)==0) {
+				printf("Wrong type in subexpression returns !\n");
+				*valid = false;
+			} else {
+				VLH_setType(l, (const char*) *returns);
+				VLH_setValue(l, subRes);
+			}
+		}
+	}
+
+}
+
+void tryVariable(const char* type, const char* expectedType, LinkedList l, LinkedList formalParameters, bool* valid) {
+	if((strcmp(type, "variable")==0)) {
+		Var* varTmp;
+		if(formalParameters != NULL) {
+			varTmp = LL_find(formalParameters, VLH_getName(l), match);
+			*valid = (varTmp!=NULL);
+			if(*valid) {
+				VLH_setType(l, expectedType);
+				VLH_setValue(l, varTmp->value);
+			}
+		}
+	}
+
 }
 
 void E_checkAndEval(const char* args, LinkedList l, LinkedList formalParameters, bool* valid) {
 	LinkedList sign = P_parse(args);
-	Var* varTmp;
 	char* signType;
 	char* paramType;
-	void* subRes;
-	char** returns = (char**)malloc(sizeof(char**));
+	*valid = true;
 	while(!LL_isEmpty(sign) && !LL_isEmpty(l) && *valid) {
 		signType = VLH_getName(sign);
 		paramType = VLH_getType(l);
 		if(!(strcmp(signType,paramType) == 0)) {
-			if((strcmp(paramType,"sub")==0)) {
-				subRes = E_eval(P_parse(VLH_getString(l)), formalParameters, returns);
-				if(subRes!=NULL) {
-					if(!strcmp(signType,(const char*) *returns)==0) {
-						printf("Wrong type in subexpression returns !\n");
-						*valid = false;
-					} else {
-						VLH_setType(l, (const char*) *returns);
-						VLH_setValue(l, subRes);
-					}
-				}
-			} else {
-				if((strcmp(paramType, "variable")==0)) {
-					if(formalParameters != NULL) {
-						varTmp = LL_find(formalParameters, VLH_getName(l), match);
-						if(varTmp==NULL) {
-							*valid = false;
-						}
-						VLH_setType(l, signType);
-						VLH_setValue(l, varTmp->value);
-					}
-				} else {
-					printf("Wrong types, expected : %s, got : %s \n", signType, paramType);
-					*valid = false;
-				}
+			trySubExpression(paramType, signType, l, formalParameters, valid);
+			tryVariable(paramType, signType, l, formalParameters, valid);
+			if(!(*valid)) {
+				printf("Wrong types, expected : '%s', got : '%s' \n", signType, paramType);
 			}
 		}
 		l = LL_getNext(l);
@@ -66,8 +76,8 @@ void* E_eval(LinkedList l, LinkedList formalParameters, char** returns) {
 		lt = LL_getNext(l);
 		E_checkAndEval(act.args, lt, formalParameters, &valid);
 		if(!act.standard) {
-			LL_add(&lt, act.params);
-			LL_add(&lt, act.sub);
+			LL_add(&lt, (void*)act.params);
+			LL_add(&lt, (void*)act.sub);
 		}
 		if(valid) {
 			res = act.function(lt);
@@ -90,9 +100,9 @@ void tryPrintInt(const char* returns, void* result) {
 }
 
 void tryPrintString(const char* returns, void* result) {
-		if(strcmp(returns, "string")==0) {
-			printf("%s\n", (char*)result);
-		}
+	if(strcmp(returns, "string")==0) {
+		printf("%s\n", (char*)result);
+	}
 }
 
 void E_printResult(const char* returns, void* result) {

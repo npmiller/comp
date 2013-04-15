@@ -1,5 +1,9 @@
 #include "Vars.h"
 
+const char* V_getName(Var v) {
+	return v.name;
+}
+
 Var VLH_getVar(LinkedList l) {
 	return *((Var*)LL_getValue(l));
 }
@@ -18,6 +22,10 @@ char* VLH_getName(LinkedList l) {
 
 char* VLH_getType(LinkedList l) {
 	return (char*)((Var*)(LL_getValue(l)))->type;
+}
+
+void* VLH_getValue(LinkedList l) {
+	return (void*)((Var*)(LL_getValue(l)))->value;
 }
 
 void VLH_setType(LinkedList l, const char* type) {

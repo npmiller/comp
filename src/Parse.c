@@ -100,7 +100,7 @@ char* P_process_call(const char* word) {
 	char* buf = NULL;
 	int i,len;
 	len = strlen(word);
-    buf = (char*)malloc((len-1)*sizeof(char));
+    	buf = (char*)malloc((len-1)*sizeof(char));
 	for(i=1; i<len; i++) {
 		buf[i-1] = word[i];
 	}

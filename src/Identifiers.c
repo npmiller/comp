@@ -27,18 +27,20 @@ void* print(LinkedList l) {
 }
 
 void* call(LinkedList l) {
+	char** returns = (char**)malloc(sizeof(char*));
 	const char* sub = (const char*)LL_getValue(l);
 	l = LL_getNext(l);
 	const char* paramsString = (const char*)LL_getValue(l);
 	l = LL_getNext(l);
 	LinkedList params = P_parse(paramsString);
-	LinkedList ltemp = l;
-	while(!LL_isEmpty(ltemp)) {
-		params->value = ltemp->value;
+	LinkedList ltemp = params;
+	while(!LL_isEmpty(l)) {
+		VLH_setValue(ltemp, VLH_getValue(l));
+		l = LL_getNext(l);
 		ltemp = LL_getNext(ltemp);
 	}
 	LinkedList toEval = P_parse(sub);
-	return E_eval(toEval, params, &sub);
+	return E_eval(toEval, params, returns);
 }
 
 bool I_compare(void* a, void* b) {
