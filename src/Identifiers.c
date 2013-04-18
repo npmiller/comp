@@ -49,20 +49,32 @@ Var print(LinkedList l) {
 	return v;
 }
 
+void V_free_name(void** v) {
+	free((void*)((*(Var**)v))->name);
+	free(*v);
+	*v = NULL;
+}
+
 Var call(LinkedList l) {
+	Var result;
+	V_init(&result);
+	LinkedList ltemp;
 	const char* sub = (const char*)LL_getValue(l);
 	l = LL_getNext(l);
 	const char* paramsString = (const char*)LL_getValue(l);
 	l = LL_getNext(l);
 	LinkedList params = P_parse(paramsString);
-	LinkedList ltemp = params;
+	ltemp = params;
 	while(!LL_isEmpty(l)) {
 		VLH_setValue(ltemp, VLH_getValue(l));
 		l = LL_getNext(l);
 		ltemp = LL_getNext(ltemp);
 	}
 	LinkedList toEval = P_parse(sub);
-	return E_eval(toEval, params);
+	result = E_eval(toEval, params);
+	LL_free(&params, V_free_name);
+	LL_free(&toEval, V_free);
+	return result;
 }
 
 bool I_compare(void* a, void* b) {

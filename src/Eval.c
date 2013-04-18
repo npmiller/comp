@@ -12,15 +12,19 @@ bool match(void* a, void* b) {
 void trySubExpression(Type type, const char* expectedType, LinkedList l, LinkedList formalParameters, bool* valid) {
 	if(T_equals("subexpression", type)) {
 		Var* subRes = (Var*)malloc(sizeof(Var));
-		*subRes = E_eval(P_parse(VLH_getString(l)), formalParameters);
+		LinkedList params = P_parse(VLH_getString(l));
+		*subRes = E_eval(params, formalParameters);
 		if(!V_isEmpty(*subRes)) {
 			if(!T_equals(expectedType, V_getType(*subRes))) {
 				printf("Wrong type in subexpression returns : %s\nres : %d\n", VLH_getString(l), *((int*)V_getValue(*subRes)));
 				*valid = false;
 			} else {
+				void* value = LL_getValue(l);
+				V_free(&value);
 				LL_setValue(l, (void*)subRes);
 			}
 		}
+		LL_free(&params, V_free);
 	}
 
 }
@@ -37,7 +41,6 @@ void tryVariable(Type type, const char* expectedType, LinkedList l, LinkedList f
 			}
 		}
 	}
-
 }
 
 void E_checkAndEval(const char* args, LinkedList l, LinkedList formalParameters, bool* valid) {
@@ -72,8 +75,18 @@ void E_checkAndEval(const char* args, LinkedList l, LinkedList formalParameters,
 	LL_free(&signTmp, V_free);	
 }
 
+void printLL(LinkedList l) {
+	while(!LL_isEmpty(l)) {
+		V_print(*((Var*)LL_getValue(l)));
+		l = LL_getNext(l);
+	}
+}
+
 Var E_eval(LinkedList l, LinkedList formalParameters) {
+	/*printLL(l);*/
 	LinkedList lt = l;
+	Var v;
+	V_init(&v);
 	Identifier act = I_find(VLH_getName(lt));
 	bool valid = true;
 	if(!(strcmp(act.name, "NotFound") == 0)) {
@@ -87,35 +100,20 @@ Var E_eval(LinkedList l, LinkedList formalParameters) {
 			LL_add(&lt, (void*)formalParameters);
 		}
 		if(valid) {
-			return act.function(lt);
-		} else {
-			Var v;
-			V_init(&v);
-			return v;
+			v = act.function(lt);
 		}
 	} else {
 		printf("Unknown Identifier : '%s'\n", VLH_getName(l));
-		Var v;
-		V_init(&v);
-		return v;
 	}
-}
-
-void tryPrintInt(const char* returns, void* result) {
-	if(strcmp(returns,"int")==0) {
-		printf("%d\n", *((int*)result));
+	if(!act.standard) {
+		free(LL_getNext(lt));
+		free(lt);
+		lt = NULL;
 	}
-}
-
-void tryPrintString(const char* returns, void* result) {
-	if(strcmp(returns, "string")==0) {
-		printf("%s\n", (char*)result);
+	if(strcmp(act.name, "if")==0) {
+		free(lt);
+		lt = NULL;
 	}
-}
-
-void E_printResult(const char* returns, void* result) {
-	if(result != NULL) {
-		tryPrintString(returns, result);
-		tryPrintInt(returns, result);
-	}
+	/*printLL(l);*/
+	return v;
 }

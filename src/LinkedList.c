@@ -35,11 +35,13 @@ void LL_add(LinkedList* l, void* value) {
 	}
 }
 
-void LL_free(LinkedList* l, void (*freeValue)(void*)) {
+void LL_free(LinkedList* l, void (*freeValue)(void**)) {
 	LinkedList ltemp;
+	void* value;
 	while(!LL_isEmpty(*l)) {
 		ltemp = (*l)->next;
-		freeValue((*l)->value);
+		value = (*l)->value;
+		freeValue(&value);
 		free(*l);
 		*l = ltemp;
 	}

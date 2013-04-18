@@ -1,16 +1,21 @@
 #include "Vars.h"
 
+void V_print(Var v) {
+	printf("'%s' : '%s'\n", v.name, T_toString(v.type));
+}
+
 void V_init(Var* v) {
 	v->name = NULL;
 	v->type = NONE;
 	v->value = NULL;
 }
 
-void V_free(void* v) {
-	Var* var = (Var*)v;
+void V_free(void** v) {
+	Var* var = *((Var**)v);
 	free((void*)var->name);
 	free((void*)var->value);
 	free(var);
+	*v = NULL;
 }
 
 bool V_isEmpty(Var v) {

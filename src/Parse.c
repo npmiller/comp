@@ -101,7 +101,6 @@ char* P_process_string(const char* word) {
 		buf[i-1] = word[i];
 	}
 	buf[i-1]='\0';
-	free((void*)word);
 	return buf;
 }
 
@@ -114,7 +113,6 @@ char* P_process_call(const char* word) {
 		buf[i-1] = word[i];
 	}
 	buf[i-1]='\0';
-	free((void*)word);
 	return buf;
 }
 
@@ -129,11 +127,10 @@ int* P_process_digit(const char* word) {
 		/*}*/
 	/*}*/
 	*r = atoi(word);
-	free((void*)word);
 	return r;
 }
 
-void P_process_sign(const char* word, const char** name, void** value) {
+void P_process_sign(const char* word, Var* p) {
 	int i = 1;
 	char* nameBuffer = NULL;
 	int numNameBuffer = 1;
@@ -162,39 +159,48 @@ void P_process_sign(const char* word, const char** name, void** value) {
 		}
 		i++;
 	}
-	*name = nameBuffer;
-	*value = (void*)valueBuffer;
-	free((void*)word);
+	nameBuffer = (char*)realloc(nameBuffer, (numNameBuffer)*sizeof(char));
+	nameBuffer[numNameBuffer - 1] = '\0';
+	valueBuffer = (char*)realloc(valueBuffer, (numValueBuffer)*sizeof(char));
+	valueBuffer[numValueBuffer - 1] = '\0';
+
+	V_setName(p, nameBuffer);
+	V_setValue(p, (void*)valueBuffer);
 }
 
 Var* P_process(const char* word) {
 	errno = GOOD;
+	char* wordcp;
 	Var *p = (Var*)malloc(sizeof(Var));
 	V_init(p);
 	if(word[0] == '"') {
-		p->value = P_process_string(word);
-		p->type = STRING;
+		V_setValue(p, P_process_string(word));
+		V_setType(p, STRING);
 		return p;
 	} else if(word[0] == '(') {
-		p->value = P_process_call(word);
-		p->type = SUBEXPRESSION;
+		V_setValue(p, P_process_call(word));
+		V_setType(p, SUBEXPRESSION);
 		return p;
 	} else if(isdigit(word[0])) {
-		p->value = P_process_digit(word);
-		p->type = NUMBER;
+		V_setValue(p, P_process_digit(word));
+		V_setType(p, NUMBER);
 		return p;
 	} else if(word[0] == '{') {
-		p->type = SIGNATURE;
-		P_process_sign(word, &(p->name), &(p->value));
+		V_setType(p, SIGNATURE);
+		P_process_sign(word, p);
 		return p;
 	} else if ((strcmp(word, "true")==0) || (strcmp(word, "false")==0)) {
-		p->type = BOOLEAN;
-		p->value = word;
+		wordcp = (char*)malloc(sizeof(char)*(strlen(word)+1));
+		strcpy(wordcp, word);
+		V_setType(p, BOOLEAN);
+		V_setValue(p, (void*)wordcp);
 		return p;
 	} else {
 		/*p->value = P_process_var(word);*/
-		p->type = VARIABLE;
-		p->name = word;
+		wordcp = (char*)malloc(sizeof(char)*(strlen(word)+1));
+		strcpy(wordcp, word);
+		V_setType(p, VARIABLE);
+		V_setName(p, wordcp);
 		return p;
 	}
 }
@@ -207,10 +213,12 @@ LinkedList P_parse(const char* line) {
 	LinkedList res = NULL;
 	word = P_getNextWord(line, end, &end);
 	LL_add(&res, P_process(word));
+	free((void*)word);
 	lend = res;
 	while(end!=-1) {
 		word = P_getNextWord(line, end, &end);
 		LL_add(&ltemp, P_process(word));
+		free((void*)word);
 		LL_setNext(lend, ltemp);
 		lend = ltemp;
 		ltemp = NULL;
