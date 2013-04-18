@@ -18,7 +18,7 @@ void LL_setValue(LinkedList, void*);
 bool LL_isEmpty(LinkedList);
 
 void LL_add(LinkedList*, void*);
-void LL_free(LinkedList*, void (*freeValue)(void*));
+void LL_free(LinkedList*, void (*freeValue)(void**));
 
 void* LL_find(LinkedList, void*,  bool (*)(void*, void*));
 
