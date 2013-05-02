@@ -60,9 +60,13 @@ Var call(LinkedList l) {
 	V_init(&result);
 	LinkedList ltemp;
 	const char* sub = (const char*)LL_getValue(l);
+	ltemp = l;
 	l = LL_getNext(l);
+	free(ltemp);
 	const char* paramsString = (const char*)LL_getValue(l);
+	ltemp = l;
 	l = LL_getNext(l);
+	free(ltemp);
 	LinkedList params = P_parse(paramsString);
 	ltemp = params;
 	while(!LL_isEmpty(l)) {
@@ -72,8 +76,8 @@ Var call(LinkedList l) {
 	}
 	LinkedList toEval = P_parse(sub);
 	result = E_eval(toEval, params);
-	LL_free(&params, V_free_name);
 	LL_free(&toEval, V_free);
+	LL_free(&params, V_free_name);
 	return result;
 }
 
@@ -106,8 +110,22 @@ Var function(LinkedList l) {
 	return v;
 }
 
+void I_free(void* i) {
+	Identifier* I = (Identifier*)i;
+
+	if(I->standard) {
+		free(i);
+	} else {
+		free((void*)I->name);
+		free((void*)I->params);
+		free((void*)I->sub);
+		free((void*)I->args);
+		free(i);
+	}
+}
+
 Var my_exit(LinkedList l) {
-	BBT_free(identifiers, free);
+	BBT_free(identifiers, I_free);
 	exit(0);
 }
 
