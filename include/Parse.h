@@ -13,7 +13,13 @@
 #include "BalancedBinaryTree.h"
 #include <stdlib.h>
 #include <errno.h>
+#include "Vars.h"
 
 LinkedList P_parse(const char*);
+char* P_matchingBracket(const char*, const char , const char, int*);
+char* P_getInBetween(const char*, char, int*);
+char* P_getNextWord(const char*, int, int*);
+char* P_process_string(const char*);
+Var* P_porcess(const char* word);
 
 #endif

@@ -3,9 +3,11 @@
 #include <CUnit/Basic.h>
 
 #include "LinkedList_tests.h"
+#include "Parse_tests.h"
 
 int main(int argc, char** argv){
   CU_pSuite LL_suite = NULL;
+  CU_pSuite P_suite = NULL;
 
   /* initialisation du registre de tests */
   if (CUE_SUCCESS != CU_initialize_registry())
@@ -17,6 +19,12 @@ int main(int argc, char** argv){
     CU_cleanup_registry();
     return CU_get_error();
   }
+ 
+  P_suite = CU_add_suite("Parse", init_P_suite_success, clean_P_suite_success);
+  if (NULL == P_suite) {
+    CU_cleanup_registry();
+    return CU_get_error();
+  }
 
   /* Ajout des tests à la suite de tests boite noire */
   if ((NULL == CU_add_test(LL_suite, "LL_add", test_add))
@@ -25,6 +33,7 @@ int main(int argc, char** argv){
 		  || (NULL == CU_add_test(LL_suite, "LL_getValue", test_getValue))
 		  || (NULL == CU_add_test(LL_suite, "LL_setNext", test_setNext))
 		  || (NULL == CU_add_test(LL_suite, "LL_setValue", test_setValue))
+		  || (NULL == CU_add_test(P_suite, "P_matchingBracket", P_matchingBracket_test))
 		  )
     {
       CU_cleanup_registry();
