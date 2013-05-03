@@ -29,6 +29,7 @@ void V_free(void**);
 /* VLH : Variable-LinkedList Helpers */
 Var VLH_getVar(LinkedList);
 int VLH_getInt(LinkedList);
+bool VLH_getBool(LinkedList);
 char* VLH_getString(LinkedList);
 char* VLH_getName(LinkedList);
 Type VLH_getType(LinkedList);

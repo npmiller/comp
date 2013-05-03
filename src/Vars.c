@@ -58,6 +58,10 @@ int VLH_getInt(LinkedList l) {
 	return *((int*)((Var*)(LL_getValue(l)))->value);
 }
 
+bool VLH_getBool(LinkedList l) {
+	return *((bool*)((Var*)(LL_getValue(l)))->value);
+}
+
 char* VLH_getString(LinkedList l) {
 	return (char*)((Var*)(LL_getValue(l)))->value;
 }

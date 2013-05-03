@@ -135,7 +135,7 @@ Var my_exit(LinkedList l) {
 Var my_if(LinkedList l) {
 	LinkedList formalParameters = LL_getValue(l);
 	l = LL_getNext(l);
-	const char* boolean = VLH_getString(l);
+	bool boolean = VLH_getBool(l);
 	l = LL_getNext(l);
 	const char* sub1 = VLH_getString(l);
 	l = LL_getNext(l);
@@ -143,7 +143,7 @@ Var my_if(LinkedList l) {
 	LinkedList toEval = NULL;
 	Var res;
 	V_init(&res);
-	if(strcmp(boolean, "true")==0) {
+	if(boolean) {
 		toEval = P_parse(sub1);
 		res = E_eval(toEval, formalParameters);
 		LL_free(&toEval, V_free);
@@ -164,11 +164,11 @@ Var equals(LinkedList l) {
 	l = LL_getNext(l);
 	b = VLH_getInt(l);
 	if(a == b) {
-		v.value = (char*)malloc(sizeof(char)*5);
-		strcpy(v.value, "true");
+		v.value = (bool*)malloc(sizeof(bool));
+		*((bool*)v.value) = true;
 	} else {
-		v.value = (char*)malloc(sizeof(char)*6);
-		strcpy(v.value, "false");
+		v.value = (bool*)malloc(sizeof(bool));
+		*((bool*)v.value) = false;
 	}
 	return v;
 }

@@ -21,7 +21,7 @@ void printResult(Var v) {
 				printf("%s\n", (char*)V_getValue(v));
 				break;
 			case BOOLEAN :
-				printf("%s\n", (char*)V_getValue(v));
+				printf("%s\n", *((bool*)V_getValue(v)) ? "true" : "false");
 				break;
 			default :
 				printf("Erreur, retour non affichable : %s\n", T_toString(t));

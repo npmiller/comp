@@ -189,11 +189,17 @@ Var* P_process(const char* word) {
 		V_setType(p, SIGNATURE);
 		P_process_sign(word, p);
 		return p;
-	} else if ((strcmp(word, "true")==0) || (strcmp(word, "false")==0)) {
-		wordcp = (char*)malloc(sizeof(char)*(strlen(word)+1));
-		strcpy(wordcp, word);
+	} else if (strcmp(word, "true")==0) {
+		bool* res = (bool*)malloc(sizeof(bool));
+		*res = true;
 		V_setType(p, BOOLEAN);
-		V_setValue(p, (void*)wordcp);
+		V_setValue(p, (void*)res);
+		return p;
+	} else if (strcmp(word, "false")==0) {
+		bool* res = (bool*)malloc(sizeof(bool));
+		*res = false;
+		V_setType(p, BOOLEAN);
+		V_setValue(p, (void*)res);
 		return p;
 	} else {
 		/*p->value = P_process_var(word);*/
