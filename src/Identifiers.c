@@ -77,8 +77,8 @@ Var call(LinkedList l) {
 	}
 	LinkedList toEval = P_parse(sub);
 	result = E_eval(toEval, params);
-	printf("------------------------- Call -------------------\n");
-	printLL(toEval);
+	/*printf("------------------------- Call -------------------\n");*/
+	/*printLL(toEval);*/
 	LL_free(&toEval, V_free);
 	LL_free(&params, V_free_name);
 	return result;
