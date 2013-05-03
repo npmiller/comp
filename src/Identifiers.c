@@ -140,11 +140,19 @@ Var my_if(LinkedList l) {
 	const char* sub1 = VLH_getString(l);
 	l = LL_getNext(l);
 	const char* sub2 = VLH_getString(l);
+	LinkedList toEval = NULL;
+	Var res;
+	V_init(&res);
 	if(strcmp(boolean, "true")==0) {
-		return E_eval(P_parse(sub1), formalParameters);
+		toEval = P_parse(sub1);
+		res = E_eval(toEval, formalParameters);
+		LL_free(&toEval, V_free);
 	} else {
-		return E_eval(P_parse(sub2), formalParameters);
+		toEval = P_parse(sub2);
+		res = E_eval(toEval, formalParameters);
+		LL_free(&toEval, V_free);
 	}
+	return res;
 }
 
 Var equals(LinkedList l) {
