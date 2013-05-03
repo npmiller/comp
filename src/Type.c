@@ -17,6 +17,8 @@ bool T_equals(const char* typeString, Type type) {
 			return (strcmp(typeString, "variable")==0);
 		case NONE :
 			return (strcmp(typeString, "none")==0);
+		case ANY :
+			return (strcmp(typeString, "any")==0);
 	}
 }
 char* T_toString(Type type) {
@@ -35,6 +37,8 @@ char* T_toString(Type type) {
 			return "variable";
 		case NONE :
 			return "none";
+		case ANY :
+			return "any";
 	}
 }
 
@@ -66,6 +70,8 @@ void* TV_copyVarValue(void* src) {
 		case VARIABLE :
 			return newValue;
 		case NONE :
+			return newValue;
+		case ANY : 
 			return newValue;
 	}
 

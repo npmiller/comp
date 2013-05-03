@@ -159,15 +159,29 @@ Var equals(LinkedList l) {
 	Var v;
 	V_init(&v);
 	v.type = BOOLEAN;
-	int a,b;
-	a = VLH_getInt(l);
+	v.value = (bool*)malloc(sizeof(bool));
+	Var a,b;
+	a = VLH_getVar(l);
 	l = LL_getNext(l);
-	b = VLH_getInt(l);
-	if(a == b) {
-		v.value = (bool*)malloc(sizeof(bool));
-		*((bool*)v.value) = true;
+	b = VLH_getVar(l);
+	if(V_getType(a) == V_getType(b)) {
+		switch(V_getType(a)) {
+			case NUMBER :
+				*((bool*)v.value) = (*((int*)V_getValue(a)) == *((int*)V_getValue(b)));
+				break;
+			case BOOLEAN :
+				*((bool*)v.value) = (*((bool*)V_getValue(a)) == *((bool*)V_getValue(b)));
+				break;
+			case STRING :
+				*((bool*)v.value) = (strcmp((char*)V_getValue(a), (char*)V_getValue(b))==0);
+				break;
+			case SIGNATURE :
+				*((bool*)v.value) = (strcmp((char*)V_getValue(a), (char*)V_getValue(b))==0);
+				break;
+			default:
+				*((bool*)v.value) = false;
+		}
 	} else {
-		v.value = (bool*)malloc(sizeof(bool));
 		*((bool*)v.value) = false;
 	}
 	return v;
@@ -230,7 +244,7 @@ Identifiers I_Identifiers() {
 	BBT_add(I,(void*)I_create("function", "variable signature subexpression", function), I_compare);
 	BBT_add(I,(void*)I_create("exit", "", my_exit), I_compare);
 	BBT_add(I,(void*)I_create("if", "boolean subexpression subexpression", my_if), I_compare);
-	BBT_add(I,(void*)I_create("equals", "number number", equals), I_compare);
+	BBT_add(I,(void*)I_create("equals", "any any", equals), I_compare);
 	BBT_add(I,(void*)I_create("multiply", "number number", multiply), I_compare);
 
 	return I;

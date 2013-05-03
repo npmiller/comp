@@ -15,8 +15,8 @@ void trySubExpression(Type type, const char* expectedType, LinkedList l, LinkedL
 		LinkedList params = P_parse(VLH_getString(l));
 		*subRes = E_eval(params, formalParameters);
 		if(!V_isEmpty(*subRes)) {
-			if(!T_equals(expectedType, V_getType(*subRes))) {
-				printf("Wrong type in subexpression returns : %s\nres : %d\n", VLH_getString(l), *((int*)V_getValue(*subRes)));
+			if(!T_equals(expectedType, V_getType(*subRes)) && !T_equals(expectedType, ANY)) {
+				printf("Wrong type in subexpression returns : %s\tres : %d\n", VLH_getString(l), *((int*)V_getValue(*subRes)));
 				*valid = false;
 			} else {
 				void* value = LL_getValue(l);
@@ -37,7 +37,7 @@ void tryVariable(Type type, const char* expectedType, LinkedList l, LinkedList f
 			*valid = (varTmp!=NULL);
 			if(*valid) {
 				void* newValue = TV_copyVarValue(varTmp);
-				VLH_setType(l, V_getType(*varTmp));
+				VLH_setType(l, V_getVType(*varTmp));
 				VLH_setValue(l, newValue);
 			}
 		}
