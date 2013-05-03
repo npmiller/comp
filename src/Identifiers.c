@@ -71,11 +71,14 @@ Var call(LinkedList l) {
 	ltemp = params;
 	while(!LL_isEmpty(l)) {
 		VLH_setValue(ltemp, VLH_getValue(l));
+		VLH_setVType(ltemp, VLH_getType(l));
 		l = LL_getNext(l);
 		ltemp = LL_getNext(ltemp);
 	}
 	LinkedList toEval = P_parse(sub);
 	result = E_eval(toEval, params);
+	printf("------------------------- Call -------------------\n");
+	printLL(toEval);
 	LL_free(&toEval, V_free);
 	LL_free(&params, V_free_name);
 	return result;

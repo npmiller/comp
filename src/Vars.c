@@ -7,6 +7,7 @@ void V_print(Var v) {
 void V_init(Var* v) {
 	v->name = NULL;
 	v->type = NONE;
+	v->vtype = NONE,
 	v->value = NULL;
 }
 
@@ -28,6 +29,10 @@ const char* V_getName(Var v) {
 
 Type V_getType(Var v) {
 	return v.type;
+}
+
+Type V_getVType(Var v) {
+	return v.vtype;
 }
 
 void* V_getValue(Var v) {
@@ -65,12 +70,20 @@ Type VLH_getType(LinkedList l) {
 	return (Type)((Var*)(LL_getValue(l)))->type;
 }
 
+Type VLH_getVType(LinkedList l) {
+	return (Type)((Var*)(LL_getValue(l)))->vtype;
+}
+
 void* VLH_getValue(LinkedList l) {
 	return (void*)((Var*)(LL_getValue(l)))->value;
 }
 
 void VLH_setType(LinkedList l, Type type) {
 	((Var*)LL_getValue(l))->type = type;
+}
+
+void VLH_setVType(LinkedList l, Type type) {
+	((Var*)LL_getValue(l))->vtype = type;
 }
 
 void VLH_setName(LinkedList l, const char* name) {

@@ -1,4 +1,5 @@
 #include "Type.h"
+#include "Vars.h"
 
 bool T_equals(const char* typeString, Type type) {
 	switch(type) {
@@ -35,4 +36,37 @@ char* T_toString(Type type) {
 		case NONE :
 			return "none";
 	}
+}
+
+void* TV_copyVarValue(void* src) {
+	Var v = *((Var*)src);
+	void* newValue = NULL;
+	Type type = V_getVType(v);
+	switch(type) {
+		case STRING :
+			newValue = malloc(sizeof(V_getValue(v)));
+			memcpy(newValue, V_getValue(v), sizeof((strlen((char*)V_getValue(v))+1)*sizeof(char)));
+			return newValue;
+		case NUMBER :
+			newValue = malloc(sizeof(V_getValue(v)));
+			memcpy(newValue, V_getValue(v), sizeof(int));
+			return newValue;
+		case BOOLEAN :
+			newValue = malloc(sizeof(V_getValue(v)));
+			memcpy(newValue, V_getValue(v), sizeof((strlen((char*)V_getValue(v))+1)*sizeof(char)));
+			return newValue;
+		case SUBEXPRESSION :
+			newValue = malloc(sizeof(V_getValue(v)));
+			memcpy(newValue, V_getValue(v), sizeof((strlen((char*)V_getValue(v))+1)*sizeof(char)));
+			return newValue;
+		case SIGNATURE :
+			newValue = malloc(sizeof(V_getValue(v)));
+			memcpy(newValue, V_getValue(v), sizeof((strlen((char*)V_getValue(v))+1)*sizeof(char)));
+			return newValue;
+		case VARIABLE :
+			return newValue;
+		case NONE :
+			return newValue;
+	}
+
 }

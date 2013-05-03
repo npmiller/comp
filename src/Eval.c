@@ -36,8 +36,9 @@ void tryVariable(Type type, const char* expectedType, LinkedList l, LinkedList f
 			varTmp = LL_find(formalParameters, VLH_getName(l), match);
 			*valid = (varTmp!=NULL);
 			if(*valid) {
+				void* newValue = TV_copyVarValue(varTmp);
 				VLH_setType(l, V_getType(*varTmp));
-				VLH_setValue(l, V_getValue(*varTmp));
+				VLH_setValue(l, newValue);
 			}
 		}
 	}
@@ -105,11 +106,11 @@ Var E_eval(LinkedList l, LinkedList formalParameters) {
 	} else {
 		printf("Unknown Identifier : '%s'\n", VLH_getName(l));
 	}
-	if(!act.standard) {
-		free(LL_getNext(lt));
-		free(lt);
-		lt = NULL;
-	}
+	/*if(!act.standard) {*/
+		/*free(LL_getNext(lt));*/
+		/*free(lt);*/
+		/*lt = NULL;*/
+	/*}*/
 	if(strcmp(act.name, "if")==0) {
 		free(lt);
 		lt = NULL;
