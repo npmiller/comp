@@ -8,6 +8,5 @@ typedef enum { STRING, NUMBER, BOOLEAN, NONE, ANY, SUBEXPRESSION, SIGNATURE, VAR
 
 bool T_equals(const char*, Type);
 char* T_toString(Type);
-void* TV_copyVarValue(void* src); 
 
 #endif

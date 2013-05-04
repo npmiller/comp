@@ -36,7 +36,7 @@ void tryVariable(Type type, const char* expectedType, LinkedList l, LinkedList f
 			varTmp = LL_find(formalParameters, VLH_getName(l), match);
 			*valid = (varTmp!=NULL);
 			if(*valid) {
-				void* newValue = TV_copyVarValue(varTmp);
+				void* newValue = V_copyValue(V_getValue(*varTmp), V_getVType(*varTmp));
 				VLH_setType(l, V_getVType(*varTmp));
 				VLH_setValue(l, newValue);
 			}

@@ -44,8 +44,8 @@ Var multiply(LinkedList l) {
 Var print(LinkedList l) {
 	Var v;
 	V_init(&v);
-	char* res = VLH_getString(l);
-	printf("%s\n", res);
+	Var res = VLH_getVar(l);
+	V_print(res);
 	return v;
 }
 
@@ -187,6 +187,14 @@ Var equals(LinkedList l) {
 	return v;
 }
 
+Var my_return(LinkedList l) {
+	Var res;
+	V_init(&res);
+	V_setType(&res, VLH_getType(l));
+	V_setValue(&res, V_copyValue(VLH_getValue(l), VLH_getType(l)));
+	return res;
+}
+
 int I_getID(const char* string) {
 	int res = 0;
 	int i = 0;
@@ -240,7 +248,8 @@ Identifiers I_Identifiers() {
 	Identifiers I;
 	I = BBT_create((void*)I_create("add", "number number", add), NULL, NULL);
 	BBT_add(I,(void*)I_create("substract", "number number", substract), I_compare);
-	BBT_add(I,(void*)I_create("print", "string", print), I_compare);
+	BBT_add(I,(void*)I_create("print", "any", print), I_compare);
+	BBT_add(I,(void*)I_create("return", "any", my_return), I_compare);
 	BBT_add(I,(void*)I_create("function", "variable signature subexpression", function), I_compare);
 	BBT_add(I,(void*)I_create("exit", "", my_exit), I_compare);
 	BBT_add(I,(void*)I_create("if", "boolean subexpression subexpression", my_if), I_compare);

@@ -1,8 +1,27 @@
 #include "Vars.h"
 
 void V_print(Var v) {
-	printf("'%s' : '%s'\n", v.name, T_toString(v.type));
+	Type t = V_getType(v);
+	if(t!=NONE) {
+		switch(t) {
+			case NUMBER :
+				printf("%d\n", *((int*)V_getValue(v)));
+				break;
+			case STRING :
+				printf("%s\n", (char*)V_getValue(v));
+				break;
+			case BOOLEAN :
+				printf("%s\n", *((bool*)V_getValue(v)) ? "true" : "false");
+				break;
+			default :
+				printf("Erreur, retour non affichable : %s\n", T_toString(t));
+		}
+	}
 }
+
+/*void V_print(Var v) {*/
+	/*printf("'%s' : '%s'\n", v.name, T_toString(v.type));*/
+/*}*/
 
 void V_init(Var* v) {
 	v->name = NULL;
@@ -10,6 +29,7 @@ void V_init(Var* v) {
 	v->vtype = NONE,
 	v->value = NULL;
 }
+
 
 void V_free(void** v) {
 	Var* var = *((Var**)v);
@@ -50,6 +70,57 @@ void V_setType(Var* v, Type type) {
 	v->type = type;
 }
 
+void V_setVType(Var* v, Type vtype) {
+	v->vtype = vtype;
+}
+
+void* V_copyValue(void* value, Type type) {
+	void* valuecp = NULL;
+	switch(type) {
+		case STRING :
+			valuecp = malloc(sizeof((strlen((char*)value)+1)*sizeof(char)));
+			memcpy(valuecp, value, (strlen((char*)value)+1)*sizeof(char));
+			return valuecp;
+		case NUMBER :
+			valuecp = malloc(sizeof(value));
+			memcpy(valuecp, value, sizeof(int));
+			return valuecp;
+		case BOOLEAN :
+			valuecp = malloc(sizeof((strlen((char*)value)+1)*sizeof(char)));
+			memcpy(valuecp, value, (strlen((char*)value)+1)*sizeof(char));
+			return valuecp;
+		case SUBEXPRESSION :
+			valuecp = malloc(sizeof((strlen((char*)value)+1)*sizeof(char)));
+			memcpy(valuecp, value, (strlen((char*)value)+1)*sizeof(char));
+			return valuecp;
+		case SIGNATURE :
+			valuecp = malloc(sizeof((strlen((char*)value)+1)*sizeof(char)));
+			memcpy(valuecp, value, (strlen((char*)value)+1)*sizeof(char));
+			return valuecp;
+		default:
+			return valuecp;
+	}
+}
+
+Var V_copy(Var v) {
+	Var result;
+	V_init(&result);
+	V_setType(&result, V_getType(v));
+	V_setVType(&result, V_getVType(v));
+	if(V_getType(v) == VARIABLE) {
+		V_setValue(&result, V_copyValue(V_getValue(v), V_getVType(v)));	
+	} else {
+		V_setValue(&result, V_copyValue(V_getValue(v), V_getType(v)));	
+	}
+	char* namecp = (char*)malloc(sizeof(char)*(strlen(V_getName(v))+1));
+	strcpy(namecp, V_getName(v));
+	V_setName(&result, namecp);
+	return result;
+}
+
+
+
+/* ---------------------------------------------------------------------*/
 Var VLH_getVar(LinkedList l) {
 	return *((Var*)LL_getValue(l));
 }

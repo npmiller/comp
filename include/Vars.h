@@ -16,6 +16,8 @@ typedef struct {
 
 void V_init(Var*);
 void V_print(Var);
+Var V_copy(Var);
+void* V_copyValue(void*, Type);
 bool V_isEmpty(Var);
 const char* V_getName(Var);
 Type V_getType(Var);
@@ -23,6 +25,7 @@ Type V_getVType(Var);
 void* V_getValue(Var);
 void V_setValue(Var*, void*);
 void V_setType(Var*, Type);
+void V_setVType(Var*, Type);
 void V_setName(Var*, const char*);
 void V_free(void**);
 
