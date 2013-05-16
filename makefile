@@ -25,8 +25,19 @@ $(src)/%.o : $(src)/%.c
 $(tests)/%.o : $(tests)/%.c
 	$(cc) $(cflags) -o $@ -c $^
 clean: 
-	rm $(src)/*.o
-	rm $(lib)/*.a
-	rm $(tests)/*.o
-	rm comp
-	rm testMain
+	@echo "Removing objects files in $(src)..."
+	@if [ -e $(src)/*.o ]; then rm $(src)/*.o; fi
+	@echo "done."
+	@echo "Removing libraries files in $(lib)..."
+	@if [ -e $(lib)/*.a ]; then rm $(lib)/*.a; fi
+	@echo "done."
+	@echo "Removing objects files in $(tests)..."
+	@if [ -e $(tests)/*.o ]; then rm $(tests)/*.o; fi
+	@echo "done."
+	@echo "Removing libraries files in $(tests)..."
+	@if [ -e $(tests)/*.a ]; then rm $(tests)/*.a; fi
+	@echo "done."
+	@echo "Removing executables files ..."
+	@if [ -e comp ]; then rm comp; fi
+	@if [ -e testMain ]; then rm testMain; fi
+	@echo "done."
