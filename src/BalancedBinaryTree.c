@@ -31,6 +31,10 @@ void BBT_setValue(BalancedBinaryTree b, void* value) {
 	b->value = value;
 }
 
+void BBT_setRoot(BalancedBinaryTree* b, BalancedBinaryTree r) {
+	*b = r;
+}
+
 void BBT_setLeftBranch(BalancedBinaryTree b, BalancedBinaryTree lb) {
 	b->leftBranch = lb;
 }
@@ -62,20 +66,19 @@ int BBT_isBalanced(BalancedBinaryTree b) {
 	}
 }
 
-void BBT_add(BalancedBinaryTree b, void* value, bool (*compare)(void*, void*)) {
-	if(compare(value, BBT_getValue(b))) {
-		BalancedBinaryTree lb = BBT_getLeftBranch(b);
-		if(BBT_isEmpty(lb)) {
-			BBT_setLeftBranch(b, BBT_create(value, NULL, NULL));
-		} else {
-			BBT_add(lb, value, compare);
-		}
+void BBT_add(BalancedBinaryTree* b, void* value, bool (*compare)(void*, void*)) {
+	BalancedBinaryTree lb, rb;
+	if(BBT_isEmpty(*b)) {
+		BBT_setRoot(b, BBT_create(value, NULL, NULL));
 	} else {
-		BalancedBinaryTree rb = BBT_getRightBranch(b);
-		if(BBT_isEmpty(rb)) {
-			BBT_setRightBranch(b, BBT_create(value, NULL, NULL));
+		if(compare(value, BBT_getValue(*b))) {
+			lb = BBT_getLeftBranch(*b);
+			BBT_add(&lb, value, compare);
+			BBT_setLeftBranch(*b, lb);
 		} else {
-			BBT_add(rb, value, compare);
+			rb = BBT_getRightBranch(*b);
+			BBT_add(&rb, value, compare);
+			BBT_setRightBranch(*b, rb);
 		}
 	}
 }

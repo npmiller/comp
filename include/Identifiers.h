@@ -24,10 +24,11 @@ typedef struct Identifier {
 
 typedef BalancedBinaryTree Identifiers;
 
-Identifiers I_Identifiers();
+extern Identifiers identifiers;
+
 Identifier I_find(const char*);
 Identifier* I_create(const char*, const char*, Var (*)(LinkedList));
-
-Identifiers identifiers;
+bool I_compare(void*, void*);
+void I_free(void*); 
 
 #endif

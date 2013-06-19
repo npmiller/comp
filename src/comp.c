@@ -9,6 +9,9 @@
 #include "Identifiers.h"
 #include "Eval.h"
 #include "Type.h"
+#include "stdlib/ctrl.h"
+#include "stdlib/calc.h"
+#include "stdlib/io.h"
 
 
 void process(char *a) {
@@ -24,9 +27,14 @@ void process(char *a) {
 	/*printf("%d\n", *((int*)((Var*)(l->value))->value));*/
 }
 
+Identifiers identifiers = NULL;
+
 int main() {
-	char *a;	
-	identifiers = I_Identifiers();
+	use_ctrl(&identifiers);
+	use_calc(&identifiers);
+	use_io(&identifiers);
+
+	char *a;
 	while(true) {
 		a = readline("> ");
 		add_history(a);

@@ -16,17 +16,22 @@ tests: $(tests)/testMain.o $(lib)/libtests.a $(lib)/liblang.a
 $(lib)/libtests.a: $(tests)/LinkedList_tests.o $(tests)/Parse_tests.o
 	ar -r $@ $^
 
-$(lib)/liblang.a: $(src)/Parse.o $(src)/LinkedList.o $(src)/Identifiers.o $(src)/Eval.o $(src)/Vars.o $(src)/BalancedBinaryTree.o $(src)/Type.o
+$(lib)/liblang.a: $(src)/Parse.o $(src)/LinkedList.o $(src)/Identifiers.o $(src)/Eval.o $(src)/Vars.o $(src)/BalancedBinaryTree.o $(src)/Type.o $(src)/stdlib/calc.o $(src)/stdlib/ctrl.o $(src)/stdlib/io.o
 	ar -r $@ $^ 
 
 $(src)/%.o : $(src)/%.c
+	$(cc) $(cflags) -o $@ -c $^
+
+$(src)/stdlib/%.o : $(src)/%.c
 	$(cc) $(cflags) -o $@ -c $^
 
 $(tests)/%.o : $(tests)/%.c
 	$(cc) $(cflags) -o $@ -c $^
 clean: 
 	@echo "Removing objects files in $(src)..."
-	@if [ -e $(src)/*.o ]; then rm $(src)/*.o; fi
+	#@if [ -e $(src)/**/*.o ]; then rm $(src)/**/*.o; fi
+	rm $(src)/*.o
+	rm $(src)/stdlib/*.o
 	@echo "done."
 	@echo "Removing libraries files in $(lib)..."
 	@if [ -e $(lib)/*.a ]; then rm $(lib)/*.a; fi

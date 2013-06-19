@@ -39,6 +39,12 @@ void V_free(void** v) {
 	*v = NULL;
 }
 
+void V_free_name(void** v) {
+	free((void*)((*(Var**)v))->name);
+	free(*v);
+	*v = NULL;
+}
+
 bool V_isEmpty(Var v) {
 	return ((v.name == NULL) && (v.type == NONE) && (v.value == NULL));
 }

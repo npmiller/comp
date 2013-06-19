@@ -139,7 +139,7 @@ void P_process_sign(const char* word, Var* p) {
 	char** currentBuffer = &nameBuffer;
 	int* currentNum = &numNameBuffer;
 
-	while(word[i]!='\0') {
+	while(word[i]!=END) {
 		discardBlankChars(word, &i);
 		while(word[i]!=':' && word[i]!=' ') {
 			*currentBuffer = (char*)realloc(*currentBuffer, (*currentNum)*sizeof(char));
@@ -223,6 +223,7 @@ LinkedList P_parse(const char* line) {
 	lend = res;
 	while(end!=-1) {
 		word = P_getNextWord(line, end, &end);
+		/*printf("word : %s\n", word);*/
 		LL_add(&ltemp, P_process(word));
 		free((void*)word);
 		LL_setNext(lend, ltemp);
