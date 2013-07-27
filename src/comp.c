@@ -12,6 +12,7 @@
 #include "stdlib/ctrl.h"
 #include "stdlib/calc.h"
 #include "stdlib/io.h"
+#include "stdlib/string.h"
 
 
 void process(char *a) {
@@ -33,6 +34,7 @@ int main() {
 	use_ctrl(&identifiers);
 	use_calc(&identifiers);
 	use_io(&identifiers);
+	use_string(&identifiers);
 
 	char *a;
 	while(true) {

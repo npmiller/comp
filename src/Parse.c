@@ -82,7 +82,7 @@ char* P_getNextWord(const char* line, int pos, int *end) {
 			buf[charNum - 1] = '\0';
 	}
 	discardBlankChars(line, &pos);
-	if(line[pos] == END ) { 
+	if((line[pos] == END)) { 
 		*end = -1; 
 	} else {
 		*end = pos;
