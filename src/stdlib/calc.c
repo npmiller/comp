@@ -1,9 +1,9 @@
 #include "stdlib/calc.h"
 
 void use_calc(Identifiers* I) {
-	BBT_add(I,(void*)I_create("add", "number number", add), I_compare);
-	BBT_add(I,(void*)I_create("substract", "number number", substract), I_compare);
-	BBT_add(I,(void*)I_create("multiply", "number number", multiply), I_compare);
+	BBT_add(I,(void*)I_create("+", "number number", add), I_compare);
+	BBT_add(I,(void*)I_create("-", "number number", substract), I_compare);
+	BBT_add(I,(void*)I_create("*", "number number", multiply), I_compare);
 }
 
 Var add(LinkedList l) {

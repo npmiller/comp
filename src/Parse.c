@@ -32,21 +32,6 @@ char* P_matchingBracket(const char* string, const char delimO, const char delimF
 	return buf;
 }
 
-char* P_getInBetween(const char* string, char delim, int* pos) {
-	char* buf = NULL;
-	int charNum = 1;
-	do{
-		buf = (char*)realloc(buf, charNum*sizeof(char));
-		buf[charNum - 1] = string[*pos];
-		charNum++;
-		(*pos)++;
-	} while(string[*pos] != delim);
-	buf = (char*)realloc(buf, charNum*sizeof(char));
-	buf[charNum - 1] = '\0';
-	(*pos)++;
-	return buf;
-}
-
 void discardBlankChars(const char* string, int* pos) {
 	while(isblank(string[*pos])) {
 		(*pos)++;
@@ -68,7 +53,7 @@ char* P_getNextWord(const char* line, int pos, int *end) {
 			break;
 
 		case '"':
-			buf = P_getInBetween(line, '"', &pos);
+			buf = P_matchingBracket(line, '"', '"', &pos);
 			break;
 
 		default:
@@ -147,6 +132,7 @@ void P_process_sign(const char* word, Var* p) {
 			i++;
 			(*currentNum)++;
 		}
+		discardBlankChars(word, &i);
 		*currentBuffer = (char*)realloc(*currentBuffer, (*currentNum)*sizeof(char));
 		(*currentBuffer)[*currentNum - 1] = ' ';
 		(*currentNum)++;

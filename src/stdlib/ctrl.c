@@ -5,7 +5,7 @@ void use_ctrl(Identifiers* I) {
 	BBT_add(I,(void*)I_create("function", "variable signature subexpression", function), I_compare);
 	BBT_add(I,(void*)I_create("exit", "", my_exit), I_compare);
 	BBT_add(I,(void*)I_create("if", "boolean subexpression subexpression", my_if), I_compare);
-	BBT_add(I,(void*)I_create("equals", "any any", equals), I_compare);
+	BBT_add(I,(void*)I_create("=", "any any", equals), I_compare);
 }
 
 Var function(LinkedList l) {
