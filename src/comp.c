@@ -39,9 +39,14 @@ int main() {
 	char *a;
 	while(true) {
 		a = readline("> ");
-		add_history(a);
-		process(a);
-		free(a);
+		if(a != NULL) {
+			add_history(a);
+			process(a);
+			free(a);
+		} else {
+			BBT_free(identifiers, I_free);
+			return EXIT_SUCCESS;
+		}
 	}
 	return EXIT_SUCCESS;
 }
