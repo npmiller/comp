@@ -22,4 +22,6 @@ char* P_getNextWord(const char*, int, int*);
 char* P_process_string(const char*);
 Var* P_process(const char* word);
 
+void discardBlankChars(const char*, int*);
+
 #endif

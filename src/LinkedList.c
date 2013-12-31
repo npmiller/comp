@@ -18,7 +18,11 @@ void LL_setValue(LinkedList l, void* value) {
 }
 
 void LL_setNext(LinkedList l, LinkedList ln) {
-	l->next = ln;
+	if(LL_isEmpty(l)) {
+		l = ln;
+	} else {
+		l->next = ln;
+	}
 }
 
 void LL_add(LinkedList* l, void* value) {

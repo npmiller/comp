@@ -37,13 +37,18 @@ int main() {
 	use_string(&identifiers);
 
 	char *a;
+	int pos = 0;
 	while(true) {
 		a = readline("> ");
 		if(a != NULL) {
-			add_history(a);
-			process(a);
+			discardBlankChars(a, &pos);
+			if(pos != strlen(a)) {
+				add_history(a);
+				process(a);
+			}
 			free(a);
-		} else {
+		} else { 
+			free(a);
 			BBT_free(identifiers, I_free);
 			return EXIT_SUCCESS;
 		}
