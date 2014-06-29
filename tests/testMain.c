@@ -3,10 +3,12 @@
 #include <CUnit/Basic.h>
 
 #include "LinkedList_tests.h"
+#include "Stack_tests.h"
 #include "Parse_tests.h"
 
 int main(int argc, char** argv){
   CU_pSuite LL_suite = NULL;
+  CU_pSuite S_suite = NULL;
   CU_pSuite P_suite = NULL;
 
   /* initialisation du registre de tests */
@@ -16,6 +18,12 @@ int main(int argc, char** argv){
   /* ajout d'une suite de test */
   LL_suite = CU_add_suite("LinkedList", init_LL_suite_success, clean_LL_suite_success);
   if (NULL == LL_suite) {
+    CU_cleanup_registry();
+    return CU_get_error();
+  }
+
+  S_suite = CU_add_suite("Stack", init_S_suite_success, clean_S_suite_success);
+  if (NULL == S_suite) {
     CU_cleanup_registry();
     return CU_get_error();
   }
@@ -33,6 +41,8 @@ int main(int argc, char** argv){
 		  || (NULL == CU_add_test(LL_suite, "LL_getValue", test_getValue))
 		  || (NULL == CU_add_test(LL_suite, "LL_setNext", test_setNext))
 		  || (NULL == CU_add_test(LL_suite, "LL_setValue", test_setValue))
+		  || (NULL == CU_add_test(S_suite, "S_push", test_push))
+		  || (NULL == CU_add_test(S_suite, "S_pop", test_pop))
 		  || (NULL == CU_add_test(P_suite, "P_matchingBracket", P_matchingBracket_test))
 		  )
     {

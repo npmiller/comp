@@ -13,7 +13,7 @@ comp: $(src)/comp.o $(lib)/liblang.a
 tests: $(tests)/testMain.o $(lib)/libtests.a $(lib)/liblang.a
 	$(cc) $(ldtestflags) -o testMain $^
 
-$(lib)/libtests.a: $(tests)/LinkedList_tests.o $(tests)/Parse_tests.o
+$(lib)/libtests.a: $(tests)/LinkedList_tests.o $(tests)/Stack_tests.o $(tests)/Parse_tests.o
 	ar -r $@ $^
 
 $(lib)/liblang.a: $(src)/Parse.o $(src)/LinkedList.o $(src)/Stack.o $(src)/Identifiers.o $(src)/Eval.o $(src)/Vars.o $(src)/BalancedBinaryTree.o $(src)/Type.o $(src)/stdlib/calc.o $(src)/stdlib/ctrl.o $(src)/stdlib/io.o $(src)/stdlib/string.o
