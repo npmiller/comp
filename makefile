@@ -2,16 +2,16 @@ src=src
 include=include
 lib=lib
 tests=tests
-cc=clang
+CC=clang
 cflags= -Wall -pedantic -I$(include) -g
 ldflags= -L$(lib) -lreadline -llang
 ldtestflags= -L$(lib) -llang -lcunit -ltests
 
 comp: $(src)/comp.o $(lib)/liblang.a
-	$(cc) $(ldflags) -o comp $^
+	$(CC) $(ldflags) -o comp $^
 
 tests: $(tests)/testMain.o $(lib)/libtests.a $(lib)/liblang.a
-	$(cc) $(ldtestflags) -o testMain $^
+	$(CC) $(ldtestflags) -o testMain $^
 
 $(lib)/libtests.a: $(tests)/LinkedList_tests.o $(tests)/Stack_tests.o $(tests)/Parse_tests.o
 	ar -r $@ $^
@@ -20,13 +20,13 @@ $(lib)/liblang.a: $(src)/Parse.o $(src)/LinkedList.o $(src)/Stack.o $(src)/Ident
 	ar -r $@ $^ 
 
 $(src)/%.o : $(src)/%.c
-	$(cc) $(cflags) -o $@ -c $^
+	$(CC) $(cflags) -o $@ -c $^
 
 $(src)/stdlib/%.o : $(src)/%.c
-	$(cc) $(cflags) -o $@ -c $^
+	$(CC) $(cflags) -o $@ -c $^
 
 $(tests)/%.o : $(tests)/%.c
-	$(cc) $(cflags) -o $@ -c $^
+	$(CC) $(cflags) -o $@ -c $^
 clean: 
 	@echo "Removing objects files in $(src)..."
 	#@if [ -e $(src)/**/*.o ]; then rm $(src)/**/*.o; fi

@@ -64,7 +64,7 @@ Type V_getVType(Var v) {
 void* V_getValue(Var v) {
 	return v.value;
 }
-void V_setName(Var* v, const char* name) {
+void V_setName(Var* v, char* name) {
 	v->name = name;
 }
 
@@ -167,7 +167,7 @@ void VLH_setVType(LinkedList l, Type type) {
 	((Var*)LL_getValue(l))->vtype = type;
 }
 
-void VLH_setName(LinkedList l, const char* name) {
+void VLH_setName(LinkedList l, char* name) {
 	((Var*)LL_getValue(l))->name = name;
 }
 

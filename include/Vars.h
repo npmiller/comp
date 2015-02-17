@@ -8,7 +8,7 @@
 #include "Type.h"
 
 typedef struct {
-	const char* name;
+	char* name;
 	Type type;
 	Type vtype;
 	void* value;
@@ -26,7 +26,7 @@ void* V_getValue(Var);
 void V_setValue(Var*, void*);
 void V_setType(Var*, Type);
 void V_setVType(Var*, Type);
-void V_setName(Var*, const char*);
+void V_setName(Var*, char*);
 void V_free(void**);
 void V_free_name(void**);
 
@@ -41,7 +41,7 @@ Type VLH_getVType(LinkedList);
 void* VLH_getValue(LinkedList);
 void VLH_setType(LinkedList, Type);
 void VLH_setVType(LinkedList, Type);
-void VLH_setName(LinkedList, const char*);
+void VLH_setName(LinkedList, char*);
 void VLH_setValue(LinkedList, void*);
 
 #endif

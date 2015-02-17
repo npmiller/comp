@@ -12,7 +12,7 @@ typedef Node* LinkedList;
 
 LinkedList LL_getNext(LinkedList);
 void* LL_getValue(LinkedList);
-void LL_setNext(LinkedList, LinkedList);
+void LL_setNext(LinkedList*, LinkedList);
 void LL_setValue(LinkedList, void*);
 
 bool LL_isEmpty(LinkedList);

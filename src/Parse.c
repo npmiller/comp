@@ -212,7 +212,7 @@ LinkedList P_parse(const char* line) {
 		/*printf("word : %s\n", word);*/
 		LL_add(&ltemp, P_process(word));
 		free((void*)word);
-		LL_setNext(lend, ltemp);
+		LL_setNext(&lend, ltemp);
 		lend = ltemp;
 		ltemp = NULL;
 	}

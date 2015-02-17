@@ -25,6 +25,9 @@ void I_free(void* i) {
 int I_getID(const char* string) {
 	int res = 0;
 	int i = 0;
+	if (string == NULL)
+		return -1;
+
 	while(string[i] != '\0') {
 		res += (int)string[i];
 		i++;
@@ -55,7 +58,7 @@ Identifier I_find(const char* name) {
 		Id.name = "NotFound";
 	} else {
 		Id = *p_Id;
-	}	
+	}
 	return Id;
 }
 

@@ -18,11 +18,14 @@ void trySubExpression(Type type, const char* expectedType, LinkedList l, LinkedL
 			if(!T_equals(expectedType, V_getType(*subRes)) && !T_equals(expectedType, ANY)) {
 				printf("Wrong type in subexpression returns : %s\tres : %d\n", VLH_getString(l), *((int*)V_getValue(*subRes)));
 				*valid = false;
+				V_free((void**) &subRes);
 			} else {
 				void* value = LL_getValue(l);
 				V_free(&value);
 				LL_setValue(l, (void*)subRes);
 			}
+		} else {
+			V_free((void**) &subRes);
 		}
 		LL_free(&params, V_free);
 	}
@@ -73,7 +76,7 @@ void E_checkAndEval(const char* args, LinkedList l, LinkedList formalParameters,
 		printf("Wrong number of arguments !\n");
 		*valid = false;
 	}
-	LL_free(&signTmp, V_free);	
+	LL_free(&signTmp, V_free);
 }
 
 void printLL(LinkedList l) {

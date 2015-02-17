@@ -17,11 +17,11 @@ void LL_setValue(LinkedList l, void* value) {
 	l->value = value;
 }
 
-void LL_setNext(LinkedList l, LinkedList ln) {
-	if(LL_isEmpty(l)) {
-		l = ln;
+void LL_setNext(LinkedList* l, LinkedList ln) {
+	if(LL_isEmpty(*l)) {
+		*l = ln;
 	} else {
-		l->next = ln;
+		(*l)->next = ln;
 	}
 }
 
