@@ -143,7 +143,9 @@ void P_process_sign(const char* word, Var* p) {
 			currentBuffer = &nameBuffer;
 			currentNum = &numNameBuffer;
 		}
-		i++;
+		if(word[i] != END) {
+			i++;
+		}
 	}
 	nameBuffer = (char*)realloc(nameBuffer, (numNameBuffer)*sizeof(char));
 	nameBuffer[numNameBuffer - 1] = '\0';
